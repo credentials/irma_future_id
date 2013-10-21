@@ -17,8 +17,6 @@
 
     <modules>
 	<module>dispatcher</module>
-	<module>http-core-shade</module>
-	<module>http-core</module>
     </modules>
 
 </project>
