@@ -67,6 +67,7 @@ import iso.std.iso_iec._24727.tech.schema.CardApplicationServiceLoadResponse;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationServiceType;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationStartSession;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationStartSessionResponse;
+import iso.std.iso_iec._24727.tech.schema.ChannelHandleType;
 import iso.std.iso_iec._24727.tech.schema.Connect;
 import iso.std.iso_iec._24727.tech.schema.ConnectResponse;
 import iso.std.iso_iec._24727.tech.schema.ConnectionHandleType;
@@ -136,6 +137,7 @@ import iso.std.iso_iec._24727.tech.schema.ListIFDs;
 import iso.std.iso_iec._24727.tech.schema.ListIFDsResponse;
 import iso.std.iso_iec._24727.tech.schema.NamedDataServiceActionName;
 import iso.std.iso_iec._24727.tech.schema.PathType;
+import iso.std.iso_iec._24727.tech.schema.PathSecurityType;
 import iso.std.iso_iec._24727.tech.schema.ReleaseContext;
 import iso.std.iso_iec._24727.tech.schema.ReleaseContextResponse;
 import iso.std.iso_iec._24727.tech.schema.Sign;
@@ -217,6 +219,8 @@ public class TinySAL implements SAL {
     private ListIFDsResponse listIFDsResponse;
     private SALStateCallback salCallback;
 
+    private ChannelHandleType channelHandle;
+
     /**
      * Creates a new TinySAL.
      *
@@ -245,7 +249,18 @@ public class TinySAL implements SAL {
     public InitializeResponse initialize(Initialize request) {
 	InitializeResponse response = WSHelper.makeResponse(InitializeResponse.class, WSHelper.makeResultOK());
 
-	try {	    	
+	try {
+	    
+	    this.channelHandle = new ChannelHandleType();
+	
+	    this.channelHandle.setProtocolTerminationPoint("DefaultProtocolTerminationPoint");	    	
+	    this.channelHandle.setSessionIdentifier("DefaultSessionIdentifier");
+	    this.channelHandle.setBinding("DefaultBinding");
+	    
+	    PathSecurityType pathSecurity = new PathSecurityType();
+	    pathSecurity.setProtocol("DefaultProtocol");
+
+	    this.channelHandle.setPathSecurity(pathSecurity);
 
 	} catch (Exception e) {
 	    logger.error(e.getMessage(), e);
@@ -2231,7 +2246,6 @@ public class TinySAL implements SAL {
 	ListIFDsResponse response = WSHelper.makeResponse(ListIFDsResponse.class, WSHelper.makeResultOK());
 
         try {	    	
-
             this.ecr = env.getIFD().establishContext(new EstablishContext());
             this.contextHandle = this.ecr.getContextHandle();
         
