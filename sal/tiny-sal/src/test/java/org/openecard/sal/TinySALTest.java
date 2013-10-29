@@ -210,6 +210,20 @@ public class TinySALTest {
     }
 
     /**
+     * Test card recognition.
+     */
+    @Test
+    public void testRecognition() {
+	System.out.println("card recognition");
+	
+	ListIFDsResponse result = instance.performRecognition();
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
+	instance.selectIFD(0, new BigInteger("0"));
+    }
+
+
+    /**
      * Test of initialize method, of class TinySAL.
      */
     @Test(priority = 1)

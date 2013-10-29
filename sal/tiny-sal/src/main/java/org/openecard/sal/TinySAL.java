@@ -210,7 +210,8 @@ public class TinySAL implements SAL {
 
     private byte[] contextHandle;
 
-    private CardRecognition cr; 
+    private CardRecognition cr;
+    private EstablishContextResponse ecr; 
     private ListIFDs listIFDs; 
     private RecognitionInfo recognitionInfo;
     private ListIFDsResponse listIFDsResponse;
@@ -246,31 +247,6 @@ public class TinySAL implements SAL {
 
 	try {	    	
 
-	    EstablishContextResponse ecr = env.getIFD().establishContext(new EstablishContext());
-	    this.contextHandle = ecr.getContextHandle();
-	    this.cr = new CardRecognition(env.getIFD(), ecr.getContextHandle());
-	    
-	    this.listIFDs = new ListIFDs();
-	    listIFDs.setContextHandle(ecr.getContextHandle());
-	    	    
-	    this.listIFDsResponse = env.getIFD().listIFDs(listIFDs);
-	    
-	    if (listIFDsResponse.getIFDName().size() == 0) {
-	        response.setResult(WSHelper.makeResultError("listIFDsResponse", "The selected IFD is null"));
-	    } else  {
-	        // XXXX: We always take the first IFD.
-	        this.recognitionInfo = cr.recognizeCard(listIFDsResponse.getIFDName().get(0), new BigInteger("0"));
-	    
-	        this.salCallback = new SALStateCallback(cr, states);
-
-	        ConnectionHandleType connectionHandle = new ConnectionHandleType();
-	        connectionHandle.setContextHandle(ecr.getContextHandle());
-	        connectionHandle.setRecognitionInfo(recognitionInfo);
-	        connectionHandle.setIFDName(listIFDsResponse.getIFDName().get(0));
-	        connectionHandle.setSlotIndex(new BigInteger("0"));
-
-	        this.salCallback.signalEvent(EventType.CARD_RECOGNIZED, connectionHandle);
-            }
 	} catch (Exception e) {
 	    logger.error(e.getMessage(), e);
 	    response.setResult(WSHelper.makeResult(e));
@@ -2245,5 +2221,58 @@ public class TinySAL implements SAL {
 
     public byte[] getContextHandle() {
 	return contextHandle;
+    }
+
+    /**
+     * Performs card recognition and returns a list of discovered IFDs.
+     */
+
+    public ListIFDsResponse performRecognition() {
+	ListIFDsResponse response = WSHelper.makeResponse(ListIFDsResponse.class, WSHelper.makeResultOK());
+
+        try {	    	
+
+            this.ecr = env.getIFD().establishContext(new EstablishContext());
+            this.contextHandle = this.ecr.getContextHandle();
+        
+            this.cr = new CardRecognition(env.getIFD(), this.ecr.getContextHandle());
+        
+            this.listIFDs = new ListIFDs();
+            listIFDs.setContextHandle(this.ecr.getContextHandle());
+	    	    
+            this.listIFDsResponse = env.getIFD().listIFDs(listIFDs);
+               
+            if (listIFDsResponse.getIFDName().size() == 0) {
+                response.setResult(WSHelper.makeResultError("listIFDsResponse", "The selected IFD is null"));
+            }    
+        } catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	}
+	
+	return response;
+    
+    }
+
+    /**
+     * Performs a connection to the given IFD via ConnectionHandle.
+     */
+
+    public void selectIFD(int iFD, BigInteger card) {
+    
+        try {	    	
+            this.recognitionInfo = cr.recognizeCard(listIFDsResponse.getIFDName().get(iFD), card);
+            this.salCallback = new SALStateCallback(cr, states);
+
+            ConnectionHandleType connectionHandle = new ConnectionHandleType();
+            connectionHandle.setContextHandle(this.ecr.getContextHandle());
+            connectionHandle.setRecognitionInfo(recognitionInfo);
+            connectionHandle.setIFDName(listIFDsResponse.getIFDName().get(iFD));
+            connectionHandle.setSlotIndex(card);
+
+            this.salCallback.signalEvent(EventType.CARD_RECOGNIZED, connectionHandle);
+        
+        } catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	}
     }
 }
