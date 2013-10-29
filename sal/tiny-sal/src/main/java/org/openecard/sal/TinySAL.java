@@ -783,7 +783,7 @@ public class TinySAL implements SAL {
 	        Given the current parameters, the following is not clear:
 	            1. Where and which name must be used for storing the executable code.
 	            2. Which APDU must be used for executing such code.
-	            3. If that file which the loaded code must be deleted afterwards.
+	            3. If the loaded code must be deleted afterwards.
             */
 	    
 	} catch (ECardException e) {
