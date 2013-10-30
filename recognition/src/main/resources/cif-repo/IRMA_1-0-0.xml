@@ -28,9 +28,9 @@
 	</iso:CardType>
 	<iso:CardIdentification>
 		<!--
-			For the recognition of an eGK the content of EF.DIR is inspected.
-			The specific version of the eGK is provided by the content of EF.Version.
-			Nevertheless the ATR may provide a vague hint for preselection of possible card types.
+			For the recognition of an IRMA card the content of
+			the application list is inspected. However, we
+			complete the section above for completeness.
 		-->
 		<iso:ATR>
 			<iso:TS>
@@ -38,20 +38,23 @@
 				<iso:Mask>FF</iso:Mask>
 			</iso:TS>
 			<iso:T0>
-				<iso:Value>90</iso:Value>
-				<!-- [eGK-2#6.1.1] allows two possibilities for the T0-byte:
-					 1.) T0=9x if only TA1 and TD1 is present
-					 2.) T0=Dx if TA1, TC1 and TD1 is present
-					 Hence using a hexadecimal mask '90' will cover both cases. -->
-				<iso:Mask>90</iso:Mask>
+				<iso:Value>FF</iso:Value>
+				<iso:Mask>FF</iso:Mask>
 			</iso:T0>
 			<iso:InterfaceBytes>
 				<iso:Tx1>
 					<iso:TAi>
-						<iso:Value>00</iso:Value>
-						<!-- Interface Character TA1 is not specified by [eGK-2], hence the mask is '00' -->
-						<iso:Mask>00</iso:Mask>
+						<iso:Value>96</iso:Value>
+						<iso:Mask>FF</iso:Mask>
 					</iso:TAi>
+					<iso:TBi>
+						<iso:Value>00</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TBi>
+					<iso:TCi>
+						<iso:Value>FF</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TCi>
 					<iso:TDi>
 						<iso:Value>81</iso:Value>
 						<iso:Mask>FF</iso:Mask>
@@ -59,7 +62,7 @@
 				</iso:Tx1>
 				<iso:Tx2>
 					<iso:TDi>
-						<iso:Value>B1</iso:Value>
+						<iso:Value>31</iso:Value>
 						<iso:Mask>FF</iso:Mask>
 					</iso:TDi>
 				</iso:Tx2>
@@ -69,350 +72,49 @@
 						<iso:Mask>FF</iso:Mask>
 					</iso:TAi>
 					<iso:TBi>
-						<iso:Value>45</iso:Value>
+						<iso:Value>4D</iso:Value>
 						<iso:Mask>FF</iso:Mask>
 					</iso:TBi>
-					<iso:TDi>
-						<iso:Value>1F</iso:Value>
-						<iso:Mask>FF</iso:Mask>
-					</iso:TDi>
 				</iso:Tx3>
 				<iso:Tx4>
 					<iso:TAi>
 						<iso:Value>00</iso:Value>
-						<!-- Interface Character TA4 is not specified by [eGK-2], hence the mask is '00' -->
 						<iso:Mask>00</iso:Mask>
 					</iso:TAi>
 				</iso:Tx4>
 			</iso:InterfaceBytes>
-			<!-- As the Historical Bytes are vendor-specific they can not be used for recognizing an eGK.  -->
 		</iso:ATR>
 
 		<!--
-			1. For the recognition of an eGK the file EF.DIR is read and the following AIDs are expected (cf. [eGK-2#6.2.4]):
-			- #1: root      - 4F06D2760001448000
-			- #2: HCA       - 4F06D27600000102
-			- #3: ESIGN     - 4F0AA000000167455349474E
-			- #4: CIA.ESIGN - 4F0FE828BD080FA000000167455349474E
-
-			Furthermore record #5 contains 4F06D27600006601, if and only if DF.QES is present.
-
-			2. The specific version of the eGK is determined by the content of EF.Version.
-			According to [eGK-PSB] EF.Version contains 4 records:
-			- #1: Version Number of Operating System:			   003 000 0000 (3.0.0)
-			- #2: Version Number of File System Personalization:   003 000 0000 (3.0.0)
-			- #3: Version Number of File Content:				   003 000 0001 (3.0.1)
-			- #4: rfu :										   000 000 0000 (0.0.0)
+			1. For the recognition of an IRMA card the
+			application list is read and the following AIDs are
+			expected: 			
+			
+			- #1: IRMA      - 49524D4163617264
 		-->
 
-		<!-- 1. Reading records of EF.DIR -->
+		<!-- 1. Reading the application list -->
 
-		<!-- The READ RECORD command (cf. [eGK-1#15.4.5]) is used to retrieve the records of EF.DIR.
-			 The command APDU used for READ RECORD with short file identifier (SFID) (cf. [eGK-1#15.4.5.2])
-			 is give as
-			 CL ='00'
-			 INS='B2'
-			 P1 =Record Number ('01' for first record, '02' for second record etc.)
-			 P2 =8*SFID+4
-			 As the SFID of EF.DIR is '1E' (cf. [eGK-2#6.2.4]), P2 must be set to 'F4'=8*'1E'+4.
-			 Le =Length expected
-			 While [eGK-1#N027000b] specifies that a compliant COS MUST support Le='00'
-			 (called WildCardShort, cf. [eGK-1#N027600b] or [eGK-1#N028900b]) this does not
-			 seem to be always the case and hence it seems to be advisable to specify the expected length
-			 explicitely.
-		-->
-		<iso:CharacteristicFeature>
-			<!-- select MF -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<!-- select EF.DIR -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4020C022F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<iso:CardCall>
-				<!-- EF.DIR-Rec#1: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=01, P2=Read-P1=04, Le='FF' restriction in ResponseAPDU -->
-				<iso:CommandAPDU>00B20104FF</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<!-- root-AID -->
-					<iso:Body>
-						<iso:Tag>61</iso:Tag>
-						<iso:MatchingData>
-							<iso:Length>09</iso:Length>
-							<iso:MatchingValue>4F07D2760001448000</iso:MatchingValue>
-						</iso:MatchingData>
-					</iso:Body>
-					<iso:Trailer>6282</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-		</iso:CharacteristicFeature>
-
-		<iso:CharacteristicFeature>
-			<!-- select MF -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<!-- select EF.DIR -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4020C022F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<iso:CardCall>
-				<!-- EF.DIR-Rec#2: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=02, P2=Read-P1=04, Le='FF' restriction in ResponseAPDU -->
-				<iso:CommandAPDU>00B20204FF</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<!-- HCA-AID -->
-					<iso:Body>
-						<iso:Tag>61</iso:Tag>
-						<iso:MatchingData>
-							<iso:Length>08</iso:Length>
-							<iso:MatchingValue>4F06D27600000102</iso:MatchingValue>
-						</iso:MatchingData>
-					</iso:Body>
-					<iso:Trailer>6282</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-		</iso:CharacteristicFeature>
-
-		<iso:CharacteristicFeature>
-			<!-- select MF -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<!-- select EF.DIR -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4020C022F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<iso:CardCall>
-				<!-- EF.DIR-Rec#3: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=03, P2=Read-P1=04, Le='FF' restriction in ResponseAPDU -->
-				<iso:CommandAPDU>00B20304FF</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<!-- ESIGN-AID -->
-					<iso:Body>
-						<iso:Tag>61</iso:Tag>
-						<iso:MatchingData>
-							<iso:Length>0C</iso:Length>
-							<iso:MatchingValue>4F0AA000000167455349474E</iso:MatchingValue>
-						</iso:MatchingData>
-					</iso:Body>
-					<iso:Trailer>6282</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-		</iso:CharacteristicFeature>
-
-		<iso:CharacteristicFeature>
-			<!-- select MF -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<!-- select EF.DIR -->
-			<iso:CardCall>
-				<iso:CommandAPDU>00A4020C022F00</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<iso:Trailer>9000</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-			<iso:CardCall>
-				<!-- EF.DIR-Rec#4: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=04, P2=Read-P1=04, Le='FF' restriction in ResponseAPDU -->
-				<iso:CommandAPDU>00B20404FF</iso:CommandAPDU>
-				<iso:ResponseAPDU>
-					<!-- ESIGN-AID -->
-					<iso:Body>
-						<iso:Tag>61</iso:Tag>
-						<iso:MatchingData>
-							<iso:Length>11</iso:Length>
-							<iso:MatchingValue>4F0FE828BD080FA000000167455349474E</iso:MatchingValue>
-						</iso:MatchingData>
-					</iso:Body>
-					<iso:Trailer>6282</iso:Trailer>
-				</iso:ResponseAPDU>
-			</iso:CardCall>
-		</iso:CharacteristicFeature>
-
-		<!-- IMPORTANT NOTE: disabled because there is no distinction between cards with and without QES -->
-		<!-- <iso:CharacteristicFeature> -->
-		<!-- select MF -->
-		<!--   <iso:CardCall> -->
-		<!--     <iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU> -->
-		<!--     <iso:ResponseAPDU> -->
-		<!--       <iso:Trailer>9000</iso:Trailer> -->
-		<!--     </iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- select EF.DIR -->
-		<!--   <iso:CardCall> -->
-		<!--     <iso:CommandAPDU>00A4020C022F00</iso:CommandAPDU> -->
-		<!--     <iso:ResponseAPDU> -->
-		<!--       <iso:Trailer>9000</iso:Trailer> -->
-		<!--     </iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!--   <iso:CardCall> -->
-		<!-- EF.DIR-Rec#5: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=05, P2=Read-P1=04, Le='FF' useless in that case as error is expected -->
-		<!--     <iso:CommandAPDU>00B20504FF</iso:CommandAPDU> -->
-		<!--     <iso:ResponseAPDU> -->
-		<!-- as there is no QES-Application on the basic version of the eGK, the error code 6A83 (Record not found) is returned. -->
-		<!--       <iso:Trailer>6A83</iso:Trailer> -->
-		<!--     </iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- </iso:CharacteristicFeature> -->
-
-		<!-- 2. Reading records of EF.Version -->
-
-		<!-- As above the READ RECORD command (cf. [eGK-1#15.4.5]) is used to retrieve the records of EF.Version.
-			 The command APDU used for READ RECORD with short file identifier (SFID) (cf. [eGK-1#15.4.5.2])
-			 is give as
-			 CL ='00'
-			 INS='B2'
-			 P1 =Record Number ('01' for first record, '02' for second record etc.)
-			 P2 =8*SFID+4
-			 As the SFID of EF.Version is '10' (cf. [eGK-2#6.2.6]), P2 must be set to '84'=8*'10'+4.
-			 Le =Length expected
-			 While [eGK-1#N027000b] specifies that a compliant COS MUST support Le='00'
-			 (called WildCardShort, cf. [eGK-1#N027600b] or [eGK-1#N028900b]) this does not
-			 seem to be always the case and hence it seems to be advisable to specify the expected length
-			 explicitely.
+		<!-- The command (0x801006000014) is used to retrieve the list of
+		     applications in the IRMA card.
 		-->
 
-		<!-- IMPORTANT NOTE: disabled because version is no a valid criteria at the moment -->
-		<!-- <iso:CharacteristicFeature> -->
-		<!-- select MF -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- select EF.Version -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4020C022F10</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!--   <iso:CardCall> -->
-		<!-- EF.Version-Rec#1: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=01, P2=Read-P1=04, Le='FF'  -->
-		<!--	<iso:CommandAPDU>00B20104FF</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Body> -->
-		<!--		<iso:MatchingData> -->
-		<!-- without Tag and Length -->
-		<!--		  <iso:MatchingValue>0030000000</iso:MatchingValue> -->
-		<!--		</iso:MatchingData> -->
-		<!--	  </iso:Body> -->
-		<!--	  <iso:Trailer>6282</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- </iso:CharacteristicFeature> -->
-
-		<!-- <iso:CharacteristicFeature> -->
-		<!-- select MF -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- select EF.Version -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4020C022F10</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!--   <iso:CardCall> -->
-		<!-- EF.Version-Rec#2: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=02, P2=Read-P1=04, Le='FF' -->
-		<!--	<iso:CommandAPDU>00B20204FF</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Body> -->
-		<!--		<iso:MatchingData> -->
-		<!--		  <iso:MatchingValue>0030000000</iso:MatchingValue> -->
-		<!--		</iso:MatchingData> -->
-		<!--	  </iso:Body> -->
-		<!--	  <iso:Trailer>6282</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- </iso:CharacteristicFeature> -->
-
-		<!-- <iso:CharacteristicFeature> -->
-		<!-- select MF -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- select EF.Version -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4020C022F10</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!--   <iso:CardCall> -->
-		<!-- EF.Version-Rec#3: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=03, P2=Read-P1=04, Le='FF' -->
-		<!--	<iso:CommandAPDU>00B20304FF</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Body> -->
-		<!--		<iso:MatchingData> -->
-		<!--		  <iso:MatchingValue>0030000001</iso:MatchingValue> -->
-		<!-- Note that the previous generation of sample-cards has '0030000000' here. -->
-		<!--		</iso:MatchingData> -->
-		<!--	  </iso:Body> -->
-		<!--	  <iso:Trailer>6282</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- </iso:CharacteristicFeature> -->
-
-		<!-- <iso:CharacteristicFeature> -->
-		<!-- select MF -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4000C023F00</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- select EF.Version -->
-		<!--   <iso:CardCall> -->
-		<!--	<iso:CommandAPDU>00A4020C022F10</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Trailer>9000</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!--   <iso:CardCall> -->
-		<!-- EF.Version-Rec#4: CL='00', INS='B2'=READ RECORD, P1=Record-Nr=04, P2=Read-P1=04, Le='FF' -->
-		<!--	<iso:CommandAPDU>00B20404FF</iso:CommandAPDU> -->
-		<!--	<iso:ResponseAPDU> -->
-		<!--	  <iso:Body> -->
-		<!--		<iso:MatchingData> -->
-		<!--		  <iso:MatchingValue>0000000000</iso:MatchingValue> -->
-		<!--		</iso:MatchingData> -->
-		<!--	  </iso:Body> -->
-		<!--	  <iso:Trailer>6282</iso:Trailer> -->
-		<!--	</iso:ResponseAPDU> -->
-		<!--   </iso:CardCall> -->
-		<!-- </iso:CharacteristicFeature> -->
-
+		<iso:CharacteristicFeature>
+			<!-- Read the list of applications loaded -->
+			<iso:CardCall>
+				<iso:CommandAPDU>801006000014</iso:CommandAPDU>
+				<iso:ResponseAPDU>
+					<iso:Body>
+						<iso:MatchingData>
+							<iso:Length>14</iso:Length>
+							<iso:MatchingValue>09F849524D4163617264FFFFFFFFFFFFFF00AA00</iso:MatchingValue>
+						</iso:MatchingData>
+					</iso:Body>
+					<iso:Trailer>9000</iso:Trailer>
+				</iso:ResponseAPDU>
+			</iso:CardCall>
+		</iso:CharacteristicFeature>
 	</iso:CardIdentification>
-
 
 	<iso:CardCapabilities>
 		<iso:Interface>
