@@ -248,7 +248,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationPath method, of class TinySAL.
      */
-    @Test(priority = 2)
+    @Test(enabled=false)
     public void testCardApplicationPath() {
 	System.out.println("cardApplicationPath");
 	// test normal case
@@ -297,7 +297,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationConnect method, of class TinySAL.
      */
-    @Test(priority = 3)
+    @Test(enabled=false)
     public void testCardApplicationConnect() {
 	System.out.println("cardApplicationConnect");
 	// test normal case
@@ -335,7 +335,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationDisconnect method, of class TinySAL.
      */
-    @Test(priority = 4)
+    @Test(enabled=false)
     public void testCardApplicationDisconnect() {
 	System.out.println("cardApplicationDisconnect");
 	// test normal case
@@ -412,7 +412,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationList method, of class TinySAL.
      */
-    @Test(priority = 5)
+    @Test(enabled=false)
     public void testCardApplicationList() {
 	System.out.println("cardApplicationList");
 	// get path to root
@@ -455,7 +455,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationCreate method, of class TinySAL.
      */
-    @Test(priority = 6)
+    @Test(enabled=false)
     public void testCardApplicationCreate() {
 	System.out.println("cardApplicationCreate");
 	
@@ -511,7 +511,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationDelete method, of class TinySAL.
      */
-    @Test(priority = 7)
+    @Test(enabled=false)
     public void testCardApplicationDelete() {
 	System.out.println("cardApplicationDelete");
 
@@ -564,7 +564,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationServiceList method, of class TinySAL.
      */
-    @Test(priority = 8)
+    @Test(enabled=false)
     public void testCardApplicationServiceList() {
 	System.out.println("cardApplicationServiceList");
 	CardApplicationServiceList parameters = new CardApplicationServiceList();
@@ -599,7 +599,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationServiceCreate method, of class TinySAL.
      */
-    @Test(priority = 9)
+    @Test(enabled=false)
     public void testCardApplicationServiceCreate() {
 	System.out.println("cardApplicationServiceCreate");	
 	CardApplicationServiceCreate parameters = new CardApplicationServiceCreate();
@@ -652,7 +652,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationServiceDelete method, of class TinySAL.
      */
-    @Test(priority = 10)
+    @Test(enabled=false)
     public void testCardApplicationServiceDelete() {
 	System.out.println("cardApplicationServiceDelete");
 
@@ -696,7 +696,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationServiceDescribe method, of class TinySAL.
      */
-    @Test(priority = 11)
+    @Test(enabled=false)
     public void testCardApplicationServiceDescribe() {
 	System.out.println("cardApplicationServiceDescribe");
 	CardApplicationServiceDescribe parameters = new CardApplicationServiceDescribe();
@@ -740,7 +740,7 @@ public class TinySALTest {
     /**
      * Test of dataSetList method, of class TinySAL.
      */
-    @Test(priority = 12)
+    @Test(enabled=false)
     public void testDataSetList() {
 	System.out.println("dataSetList");
 
@@ -788,7 +788,7 @@ public class TinySALTest {
     /**
      * Test of dataSetCreate method, of class TinySAL.
      */
-    @Test(priority = 13)
+    @Test(enabled=false)
     public void testDataSetCreate() {
 	System.out.println("dataSetCreate");
 	
@@ -842,7 +842,7 @@ public class TinySALTest {
     /**
      * Test of dataSetSelect method, of class TinySAL.
      */
-    @Test(priority = 14)
+    @Test(enabled=false)
     public void testDataSetSelect() {
 	System.out.println("dataSetSelect");
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
@@ -898,7 +898,7 @@ public class TinySALTest {
     /**
      * Test of dataSetDelete method, of class TinySAL.
      */
-    @Test(priority = 15)
+    @Test(enabled=false)
     public void testDataSetDelete() {
 	System.out.println("dataSetDelete");
 	
@@ -949,7 +949,7 @@ public class TinySALTest {
     /**
      * Test of dsiList method, of class TinySAL.
      */
-    @Test(priority = 16)
+    @Test(enabled=false)
     public void testDsiList() {
 	System.out.println("dsiList");
 	
@@ -1136,7 +1136,7 @@ public class TinySALTest {
     /**
      * Test of dsiRead method, of class TinySAL.
      */
-    @Test(priority = 19)
+    @Test(enabled=false)
     public void testDsiRead() {
 	System.out.println("dsiRead");
 	// test normal case
@@ -1287,7 +1287,7 @@ public class TinySALTest {
      * Test of didList method, of class TinySAL.
      */
 
-    @Test(priority = 20)
+    @Test(enabled=false)
     public void testDidList() {
 	System.out.println("didList");
 
@@ -1377,7 +1377,7 @@ public class TinySALTest {
     /**
      * Test of didGet method, of class TinySAL.
      */
-    @Test(priority = 21)
+    @Test(enabled=false)
     public void testDidGet() {
 	System.out.println("didGet");
 
@@ -1457,7 +1457,7 @@ public class TinySALTest {
     /**
      * Test of aclList method, of class TinySAL.
      */
-    @Test(priority = 22)
+    @Test(enabled=false)
     public void testAclList() {
 	System.out.println("aclList");
 	// get path to esign
@@ -1527,7 +1527,7 @@ public class TinySALTest {
     /**
      * Test of aclModify method, of class TinySAL.
      */
-    @Test(priority = 23)
+    @Test(enabled=false)
     public void testAclModify() {
 	System.out.println("aclModify");
 
