@@ -357,11 +357,11 @@
 			<!-- ============================= -->
 			<!-- IRMA: Differential Identities -->
 			<!-- ============================= -->
-			<!--PIN.CH-->
+			<!--PIN.ADMIN (KeyRef = 0x01) -->
 			<iso:DIDInfo>
 				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
 				<iso:DifferentialIdentity>
-					<iso:DIDName>PIN.CH</iso:DIDName>
+					<iso:DIDName>PIN.ADMIN</iso:DIDName>
 					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.9</iso:DIDProtocol>
 					<!--PIN Compare-->
 					<iso:DIDMarker>

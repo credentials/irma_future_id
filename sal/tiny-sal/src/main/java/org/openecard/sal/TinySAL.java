@@ -1971,6 +1971,9 @@ public class TinySAL implements SAL {
 	    Assert.assertIncorrectParameter(didAuthenticationData, "The parameter AuthenticationProtocolData is empty.");
 
 	    String protocolURI = didAuthenticationData.getProtocol();
+	    
+	    System.out.println("DIDAuthenticate - protocolURI: " + protocolURI);
+	    
 	    // FIXME: workaround for missing protocol URI from eID-Servers
 	    if (protocolURI == null) {
 		logger.warn("ProtocolURI was null");
@@ -1983,18 +1986,18 @@ public class TinySAL implements SAL {
 	    didAuthenticationData.setProtocol(protocolURI);
 
             String didName = SALUtils.getDIDName(request);
-	    Assert.assertIncorrectParameter(didName, "The parameter didName is empty.");
+	    //Assert.assertIncorrectParameter(didName, "The parameter didName is empty.");
 	    
 	    DIDStructureType didStructure = cardStateEntry.getDIDStructure(didName, cardApplicationID);
-	    Assert.assertNamedEntityNotFound(didStructure, "The given DIDName cannot be found.");
+	    //Assert.assertNamedEntityNotFound(didStructure, "The given DIDName cannot be found.");
 
 	    DIDScopeType didScope = request.getDIDScope();
-	    Assert.assertIncorrectParameter(didScope, "The parameter DIDScope is empty.");
+	    //Assert.assertIncorrectParameter(didScope, "The parameter DIDScope is empty.");
 
 	    ConnectionHandleType samConnectionHandle = request.getSAMConnectionHandle();
-	    Assert.assertIncorrectParameter(samConnectionHandle, "The parameter SAMConnectionHandle is empty.");
+	    //Assert.assertIncorrectParameter(samConnectionHandle, "The parameter SAMConnectionHandle is empty.");
 
-            Assert.securityConditionDID(cardStateEntry, cardApplicationID, didName, DifferentialIdentityServiceActionName.DID_AUTHENTICATE);
+            //Assert.securityConditionDID(cardStateEntry, cardApplicationID, didName, DifferentialIdentityServiceActionName.DID_AUTHENTICATE);
 
 	    SALProtocol protocol = getProtocol(connectionHandle, protocolURI);
 	    if (protocol.hasNextStep(FunctionType.DIDAuthenticate)) {
@@ -2288,5 +2291,9 @@ public class TinySAL implements SAL {
         } catch (Exception e) {
 	    logger.error(e.getMessage(), e);
 	}
+    }
+
+    public CardRecognition getCardRecognition() {
+        return cr;
     }
 }

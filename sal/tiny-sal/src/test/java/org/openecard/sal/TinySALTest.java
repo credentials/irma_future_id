@@ -58,10 +58,13 @@ import iso.std.iso_iec._24727.tech.schema.CardApplicationServiceLoad;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationServiceLoadResponse;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationStartSession;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationStartSessionResponse;
+import iso.std.iso_iec._24727.tech.schema.Connect;
+import iso.std.iso_iec._24727.tech.schema.ConnectResponse;
 import iso.std.iso_iec._24727.tech.schema.ConnectionHandleType;
 import iso.std.iso_iec._24727.tech.schema.ConnectionHandleType.RecognitionInfo;
 import iso.std.iso_iec._24727.tech.schema.DIDAuthenticate;
 import iso.std.iso_iec._24727.tech.schema.DIDAuthenticateResponse;
+import iso.std.iso_iec._24727.tech.schema.DIDAuthenticationDataType;
 import iso.std.iso_iec._24727.tech.schema.DIDCreate;
 import iso.std.iso_iec._24727.tech.schema.DIDCreateResponse;
 import iso.std.iso_iec._24727.tech.schema.DIDDelete;
@@ -123,15 +126,25 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.openecard.addon.AddonManager;
 import org.openecard.bouncycastle.util.encoders.Hex;
 import org.openecard.common.ClientEnv;
 import org.openecard.common.ECardConstants;
 import org.openecard.common.enums.EventType;
 import org.openecard.common.interfaces.Dispatcher;
+//import org.openecard.common.sal.anytype.PINCompareMarkerType;
+import org.openecard.sal.protocol.pincompare.anytype.PINCompareDIDAuthenticateInputType;
+import org.openecard.common.interfaces.Environment;
+import org.openecard.event.EventManager;
 import org.openecard.common.sal.state.CardStateEntry;
 import org.openecard.common.sal.state.CardStateMap;
 import org.openecard.common.sal.state.SALStateCallback;
 import org.openecard.common.util.ByteUtils;
+import org.openecard.gui.UserConsent;
+import org.openecard.gui.swing.SwingDialogWrapper;
+import org.openecard.gui.swing.SwingUserConsent;
 import org.openecard.ifd.scio.IFD;
 import org.openecard.recognition.CardRecognition;
 import org.openecard.transport.dispatcher.MessageDispatcher;
@@ -140,6 +153,8 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -158,6 +173,7 @@ public class TinySALTest {
     private static CardStateMap states;
     private static IFD ifd;
     private static Dispatcher dispatcher;
+    private static EventManager eventManager;
 //    private static CardApplicationPathResponse cardApplicationPathResponse;
 
     byte[] appIdentifier_ESIGN = Hex.decode("A000000167455349474E");
@@ -166,6 +182,7 @@ public class TinySALTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+ 	System.out.println("set up");
 
 	env = new ClientEnv();
         IFD ifd = new IFD();
@@ -176,8 +193,61 @@ public class TinySALTest {
         env.setDispatcher(dispatcher);
 
         instance = new TinySAL(env, states);
+			
+//	UserConsent uc = new SwingUserConsent(new SwingDialogWrapper());
+//	eventManager = new EventManager(instance.getCardRecognition()cr, env, ecr.getContextHandle());
+//	AddonManager manager = new AddonManager(dispatcher, uc, states, instance.getCardRecognition(), env);
 
+/*	env = new ClientEnv();
+	Dispatcher d = new MessageDispatcher(env);
+	env.setDispatcher(d);
+	IFD ifd = new IFD();
+	ifd.setGUI(new SwingUserConsent(new SwingDialogWrapper()));
+	env.setIFD(ifd);
+	states = new CardStateMap();
+
+	EstablishContextResponse ecr = env.getIFD().establishContext(new EstablishContext());
+	CardRecognition cr = new CardRecognition(ifd, ecr.getContextHandle());
+	ListIFDs listIFDs = new ListIFDs();
+
+	listIFDs.setContextHandle(ecr.getContextHandle());
+	ListIFDsResponse listIFDsResponse = ifd.listIFDs(listIFDs);
+	RecognitionInfo recognitionInfo = cr.recognizeCard(listIFDsResponse.getIFDName().get(0), new BigInteger("0"));
+	SALStateCallback salCallback = new SALStateCallback(cr, states);
+	Connect c = new Connect();
+	c.setContextHandle(ecr.getContextHandle());
+	c.setIFDName(listIFDsResponse.getIFDName().get(0));
+	c.setSlot(new BigInteger("0"));
+	ConnectResponse connectResponse = env.getIFD().connect(c);
+
+	ConnectionHandleType connectionHandleType = new ConnectionHandleType();
+	connectionHandleType.setContextHandle(ecr.getContextHandle());
+	connectionHandleType.setRecognitionInfo(recognitionInfo);
+	connectionHandleType.setIFDName(listIFDsResponse.getIFDName().get(0));
+	connectionHandleType.setSlotIndex(new BigInteger("0"));
+	connectionHandleType.setSlotHandle(connectResponse.getSlotHandle());
+	salCallback.signalEvent(EventType.CARD_RECOGNIZED, connectionHandleType);
+	instance = new TinySAL(env, states);
+
+	// init AddonManager
+	UserConsent uc = new SwingUserConsent(new SwingDialogWrapper());
+	
+	eventManager = new EventManager(cr, env, ecr.getContextHandle());
+	AddonManager manager = new AddonManager(d, uc, states, cr, eventManager);
+	instance.setAddonManager(manager);
+*/
     }
+
+    @BeforeClass
+    public static void setUpManager() throws Exception {
+ 	System.out.println("set up manager");
+
+    	UserConsent uc = new SwingUserConsent(new SwingDialogWrapper());
+	eventManager = new EventManager(instance.getCardRecognition(), env, instance.getContextHandle());
+	AddonManager manager = new AddonManager(dispatcher, uc, states, instance.getCardRecognition(), eventManager);
+	instance.setAddonManager(manager);
+    }
+
 
     /**
      * Test of getConnectionHandles method, of class TinySAL.
@@ -337,7 +407,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationDisconnect method, of class TinySAL.
      */
-    @Test(priority = 6)
+    @Test(priority = 7)
     public void testCardApplicationDisconnect() {
 	System.out.println("cardApplicationDisconnect");
 	// test normal case
@@ -1458,12 +1528,48 @@ public class TinySALTest {
      *
      * @throws ParserConfigurationException
      */
-    @Test(enabled=false)
+    @Test(priority = 6)
     public void testDidAuthenticate() throws ParserConfigurationException {
 	System.out.println("didAuthenticate");
+
+	// get path to IRMA
+	CardApplicationPath cardApplicationPath = new CardApplicationPath();
+	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
+	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+
+	// connect to IRMA
+	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
+	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+		.get(0));
+	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
+
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
 	DIDAuthenticate parameters = new DIDAuthenticate();
-	DIDAuthenticateResponse result = instance.didAuthenticate(parameters);
-	assertEquals(ECardConstants.Major.ERROR, result.getResult().getResultMajor());
+	parameters.setDIDName("PIN.ADMIN");
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder builder = factory.newDocumentBuilder();
+	Document d = builder.newDocument();
+	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin.setTextContent("000000");
+	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
+	didAuthenticationData.getAny().add(elemPin);
+
+	PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
+		didAuthenticationData);
+
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	parameters.setConnectionHandle(result.getConnectionHandle());
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
+
+//	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
+	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+//	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
     }
 
     /**

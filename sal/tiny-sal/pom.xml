@@ -22,8 +22,8 @@
 	    <version>${project.version}</version>
 	</dependency>
 	<dependency>
-	    <groupId>org.openecard</groupId>
-	    <artifactId>common</artifactId>
+	    <groupId>org.openecard.addons</groupId>
+	    <artifactId>pin-management</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
 	<dependency>
@@ -37,7 +37,6 @@
 	    <version>${project.version}</version>
 	    <scope>provided</scope>
 	</dependency>
-
 	<dependency>
 	    <groupId>org.openecard.ifd</groupId>
 	    <artifactId>ifd-core</artifactId>
@@ -62,6 +61,17 @@
 	    <version>${project.version}</version>
 	    <scope>test</scope>
 	</dependency>
+	<dependency>
+	    <groupId>org.openecard.gui</groupId>
+	    <artifactId>swing</artifactId>
+	    <version>${project.version}</version>
+	    <scope>test</scope>
+	</dependency>
+	<dependency>
+	    <groupId>org.openecard</groupId>
+	    <artifactId>event-manager</artifactId>
+	    <version>${project.version}</version>
+	    <scope>test</scope>
+	</dependency>
     </dependencies>
-
 </project>
