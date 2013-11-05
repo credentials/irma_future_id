@@ -261,11 +261,9 @@ public class TinySALTest {
 	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
 	
 	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
-	
-	System.out.println(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult().size());
-	
-	//assertTrue(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult().size() > 0);
-	//assertEquals(cardApplicationPathResponse.getResult().getResultMajor(), ECardConstants.Major.OK);
+		
+	assertTrue(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult().size() == 1);
+	assertEquals(cardApplicationPathResponse.getResult().getResultMajor(), ECardConstants.Major.OK);
 
 	// test return of alpha card application
 
@@ -339,21 +337,21 @@ public class TinySALTest {
     /**
      * Test of cardApplicationDisconnect method, of class TinySAL.
      */
-    @Test(enabled=false)
+    @Test(priority = 6)
     public void testCardApplicationDisconnect() {
 	System.out.println("cardApplicationDisconnect");
 	// test normal case
 	// get esign path
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
 	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_ESIGN);
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
 	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
 	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
 	// connect to esign
 	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
 	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult().get(0));
 	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
-	assertEquals(appIdentifier_ESIGN, result.getConnectionHandle().getCardApplication());
+	assertEquals(appIdentifier_IRMA, result.getConnectionHandle().getCardApplication());
 	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
 	// disconnect
 	CardApplicationDisconnect cardApplicationDisconnect = new CardApplicationDisconnect();
@@ -416,17 +414,18 @@ public class TinySALTest {
     /**
      * Test of cardApplicationList method, of class TinySAL.
      */
-    @Test(enabled=false)
+    @Test(priority = 4)
     public void testCardApplicationList() {
 	System.out.println("cardApplicationList");
-	// get path to root
+
+	// get path to IRMA
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
 	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_ROOT);
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
 	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
 	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
 
-	// connect to root
+	// connect to IRMA
 	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
 	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
 		.get(0));
@@ -436,9 +435,13 @@ public class TinySALTest {
 	CardApplicationList cardApplicationList = new CardApplicationList();
 	cardApplicationList.setConnectionHandle(result.getConnectionHandle());
 	CardApplicationListResponse cardApplicationListResponse = instance.cardApplicationList(cardApplicationList);
-	assertEquals(ECardConstants.Major.OK, cardApplicationListResponse.getResult().getResultMajor());
-	assertTrue(cardApplicationListResponse.getCardApplicationNameList().getCardApplicationName().size() > 0);
 
+	assertEquals(ECardConstants.Major.OK, cardApplicationListResponse.getResult().getResultMajor());
+	assertTrue(cardApplicationListResponse.getCardApplicationNameList().getCardApplicationName().size() == 1);
+	assertTrue(bytesToHex(cardApplicationListResponse.getCardApplicationNameList().getCardApplicationName().get(0)).equals("F849524D4163617264"));
+
+	System.out.println("Applications #: " + cardApplicationListResponse.getCardApplicationNameList().getCardApplicationName().size());
+	System.out.println("AID: " + bytesToHex(cardApplicationListResponse.getCardApplicationNameList().getCardApplicationName().get(0)));
 
 	// test non existent connectionhandle
 /*	cardApplicationList = new CardApplicationList();
@@ -1291,18 +1294,18 @@ public class TinySALTest {
      * Test of didList method, of class TinySAL.
      */
 
-    @Test(enabled=false)
+    @Test(priority = 5)
     public void testDidList() {
 	System.out.println("didList");
 
-	// get path to esign
+	// get path to IRMA
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
 	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_ESIGN);
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
 	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
 	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
 
-	// connect to esign
+	// connect to IRMA
 	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
 	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
 		.get(0));
@@ -1312,59 +1315,64 @@ public class TinySALTest {
 	DIDList didList = new DIDList();
 	didList.setConnectionHandle(result.getConnectionHandle());
 	DIDQualifierType didQualifier = new DIDQualifierType();
-	didQualifier.setApplicationIdentifier(appIdentifier_ESIGN);
-	didQualifier.setObjectIdentifier("urn:oid:1.3.162.15480.3.0.25");
-	didQualifier.setApplicationFunction("Compute-signature");
+	didQualifier.setApplicationIdentifier(appIdentifier_IRMA);
+	//didQualifier.setObjectIdentifier("urn:oid:1.3.162.15480.3.0.25");
+	//didQualifier.setApplicationFunction("Compute-signature");
 	didList.setFilter(didQualifier);
 	DIDListResponse didListResponse = instance.didList(didList);
 
 	Assert.assertTrue(didListResponse.getDIDNameList().getDIDName().size() > 0);
 	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
 
+	System.out.println("Numero de DIDs: " + didListResponse.getDIDNameList().getDIDName().size());
+	
+	for(Iterator<String> i =  didListResponse.getDIDNameList().getDIDName().iterator(); i.hasNext(); ) {
+	    String item = i.next();
+            System.out.println(item);
+        }
+	
 	// get path to root
-	cardApplicationPath = new CardApplicationPath();
-	cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_ROOT);
-	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
-	cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+	//cardApplicationPath = new CardApplicationPath();
+	//cardApplicationPathType = new CardApplicationPathType();
+	//cardApplicationPathType.setCardApplication(appIdentifier_ROOT);
+	//cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	//cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
 
 	// connect to root
-	cardApplicationConnect = new CardApplicationConnect();
-	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
-		.get(0));
-	cardApplicationConnect.getCardApplicationPath().setCardApplication(appIdentifier_ROOT);
-	result = instance.cardApplicationConnect(cardApplicationConnect);
-	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+	//cardApplicationConnect = new CardApplicationConnect();
+	//cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+	//	.get(0));
+	//cardApplicationConnect.getCardApplicationPath().setCardApplication(appIdentifier_ROOT);
+	//result = instance.cardApplicationConnect(cardApplicationConnect);
+	//assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
 
-
-	didList = new DIDList();
-	didList.setConnectionHandle(result.getConnectionHandle());
-	didQualifier = new DIDQualifierType();
-	didQualifier.setApplicationIdentifier(appIdentifier_ROOT);
-	didQualifier.setObjectIdentifier("urn:oid:1.3.162.15480.3.0.25");
-	didQualifier.setApplicationFunction("Compute-signature");
-	didList.setFilter(didQualifier);
-	didListResponse = instance.didList(didList);
+	//didList = new DIDList();
+	//didList.setConnectionHandle(result.getConnectionHandle());
+	//didQualifier = new DIDQualifierType();
+	//didQualifier.setApplicationIdentifier(appIdentifier_ROOT);
+	//didQualifier.setObjectIdentifier("urn:oid:1.3.162.15480.3.0.25");
+	//didQualifier.setApplicationFunction("Compute-signature");
+	//didList.setFilter(didQualifier);
+	//didListResponse = instance.didList(didList);
 
 	// we expect 0 because of the filter
-	Assert.assertEquals(didListResponse.getDIDNameList().getDIDName().size(), 0);
-	assertEquals(ECardConstants.Major.OK, didListResponse.getResult().getResultMajor());
+	//Assert.assertEquals(didListResponse.getDIDNameList().getDIDName().size(), 0);
+	//assertEquals(ECardConstants.Major.OK, didListResponse.getResult().getResultMajor());
 
 	// test null connectionhandle
-	didList = new DIDList();
-	didList.setConnectionHandle(null);
-	didListResponse = instance.didList(didList);
-	assertEquals(ECardConstants.Major.ERROR, didListResponse.getResult().getResultMajor());
-	assertEquals(ECardConstants.Minor.App.INCORRECT_PARM, didListResponse.getResult().getResultMinor());
+	//didList = new DIDList();
+	//didList.setConnectionHandle(null);
+	//didListResponse = instance.didList(didList);
+	//assertEquals(ECardConstants.Major.ERROR, didListResponse.getResult().getResultMajor());
+	//assertEquals(ECardConstants.Minor.App.INCORRECT_PARM, didListResponse.getResult().getResultMinor());
 
 	//test invalid connectionhandle
-	didList = new DIDList();
-	didList.setConnectionHandle(result.getConnectionHandle());
-	didList.getConnectionHandle().setIFDName("invalid");
-	didListResponse = instance.didList(didList);
-	assertEquals(ECardConstants.Major.ERROR, didListResponse.getResult().getResultMajor());
-	assertEquals(ECardConstants.Minor.SAL.UNKNOWN_HANDLE, didListResponse.getResult().getResultMinor());
-
+	//didList = new DIDList();
+	//didList.setConnectionHandle(result.getConnectionHandle());
+	//didList.getConnectionHandle().setIFDName("invalid");
+	//didListResponse = instance.didList(didList);
+	//assertEquals(ECardConstants.Major.ERROR, didListResponse.getResult().getResultMajor());
+	//assertEquals(ECardConstants.Minor.SAL.UNKNOWN_HANDLE, didListResponse.getResult().getResultMinor());
     }
 
     /**
@@ -1627,4 +1635,18 @@ public class TinySALTest {
 	testGetConnectionHandles();
     }
 
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        
+        for ( int j = 0; j < bytes.length; j++ ) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        
+        return new String(hexChars);
+    }
 }
