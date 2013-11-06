@@ -1529,8 +1529,57 @@ public class TinySALTest {
      * @throws ParserConfigurationException
      */
     @Test(priority = 6)
-    public void testDidAuthenticate() throws ParserConfigurationException {
-	System.out.println("didAuthenticate");
+    public void testDidAuthenticate1() throws ParserConfigurationException {
+	System.out.println("didAuthenticate, PIN ATTRIBUTE");
+
+	// get path to IRMA
+	CardApplicationPath cardApplicationPath = new CardApplicationPath();
+	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
+	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+
+	// connect to IRMA
+	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
+	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+		.get(0));
+	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
+
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
+	DIDAuthenticate parameters = new DIDAuthenticate();
+	parameters.setDIDName("PIN.ATTRIBUTE");
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder builder = factory.newDocumentBuilder();
+	Document d = builder.newDocument();
+	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin.setTextContent("0000");
+	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
+	didAuthenticationData.getAny().add(elemPin);
+
+	PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
+		didAuthenticationData);
+
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	parameters.setConnectionHandle(result.getConnectionHandle());
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
+
+	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
+	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
+    }
+
+    /**
+     * Test of didAuthenticate method, of class TinySAL.
+     *
+     * @throws ParserConfigurationException
+     */
+    @Test(priority = 6)
+    public void testDidAuthenticate2() throws ParserConfigurationException {
+	System.out.println("didAuthenticate, PIN ADMIN");
 
 	// get path to IRMA
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
@@ -1567,9 +1616,9 @@ public class TinySALTest {
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
 
-//	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
+	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
-//	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
+	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
     }
 
     /**
