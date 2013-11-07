@@ -53,9 +53,9 @@ import org.openecard.common.ClientEnv;
 import org.openecard.common.ECardConstants;
 import org.openecard.common.enums.EventType;
 import org.openecard.common.interfaces.Dispatcher;
-import org.openecard.common.sal.anytype.PINCompareMarkerType;
-import org.openecard.common.sal.state.CardStateMap;
-import org.openecard.common.sal.state.SALStateCallback;
+//import org.openecard.common.sal.anytype.PINCompareMarkerType;
+//import org.openecard.common.sal.state.CardStateMap;
+//import org.openecard.common.sal.state.SALStateCallback;
 import org.openecard.common.util.ByteUtils;
 import org.openecard.common.util.StringUtils;
 import org.openecard.gui.UserConsent;
@@ -63,8 +63,8 @@ import org.openecard.gui.swing.SwingDialogWrapper;
 import org.openecard.gui.swing.SwingUserConsent;
 import org.openecard.ifd.scio.IFD;
 import org.openecard.recognition.CardRecognition;
-import org.openecard.sal.TinySAL;
-import org.openecard.sal.protocol.pincompare.anytype.PINCompareDIDAuthenticateInputType;
+//import org.openecard.sal.TinySAL;
+//import org.openecard.sal.protocol.pincompare.anytype.PINCompareDIDAuthenticateInputType;
 import org.openecard.transport.dispatcher.MessageDispatcher;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
@@ -84,7 +84,7 @@ public class PINCompareProtocolTest {
     public static void disable() {
 	throw new SkipException("Test completely disabled.");
     }
-
+/*
     private static ClientEnv env;
     private static TinySAL instance;
     private static CardStateMap states;
@@ -266,7 +266,7 @@ public class PINCompareProtocolTest {
     /**
      * This Test ensures that all functions unsupported by this protocol relay the correct error message when
      * called.
-     */
+     */ /*
     @Test
     public void testUnsupportedFunctions() {
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
@@ -290,5 +290,5 @@ public class PINCompareProtocolTest {
 		.getResultMinor(), ECardConstants.Minor.SAL.INAPPROPRIATE_PROTOCOL_FOR_ACTION);
 	// TODO remaining unsupported functions
     }
-
+*/
 }

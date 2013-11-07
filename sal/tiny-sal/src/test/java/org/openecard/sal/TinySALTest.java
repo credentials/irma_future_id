@@ -135,7 +135,7 @@ import org.openecard.common.ECardConstants;
 import org.openecard.common.enums.EventType;
 import org.openecard.common.interfaces.Dispatcher;
 //import org.openecard.common.sal.anytype.PINCompareMarkerType;
-import org.openecard.sal.protocol.pincompare.anytype.PINCompareDIDAuthenticateInputType;
+//import org.openecard.sal.protocol.pincompare.anytype.PINCompareDIDAuthenticateInputType;
 import org.openecard.common.interfaces.Environment;
 import org.openecard.event.EventManager;
 import org.openecard.common.sal.state.CardStateEntry;
@@ -1558,8 +1558,8 @@ public class TinySALTest {
 	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
 	didAuthenticationData.getAny().add(elemPin);
 
-	PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
-		didAuthenticationData);
+	//PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
+	//	didAuthenticationData);
 
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	parameters.setConnectionHandle(result.getConnectionHandle());
@@ -1607,8 +1607,8 @@ public class TinySALTest {
 	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
 	didAuthenticationData.getAny().add(elemPin);
 
-	PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
-		didAuthenticationData);
+	//PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
+	//	didAuthenticationData);
 
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	parameters.setConnectionHandle(result.getConnectionHandle());

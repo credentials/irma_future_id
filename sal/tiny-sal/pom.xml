@@ -22,7 +22,7 @@
 	    <version>${project.version}</version>
 	</dependency>
 	<dependency>
-	    <groupId>org.openecard.addons</groupId>
+	    <groupId>org.openecard.sal</groupId>
 	    <artifactId>pin-management</artifactId>
 	    <version>${project.version}</version>
 	</dependency>

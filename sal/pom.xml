@@ -18,6 +18,7 @@
     <modules>
 	<module>sal-common</module>
 	<module>tiny-sal</module>
+	<module>pin-management</module>
     </modules>
 
 </project>
