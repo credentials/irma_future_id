@@ -75,6 +75,7 @@ import iso.std.iso_iec._24727.tech.schema.DIDList;
 import iso.std.iso_iec._24727.tech.schema.DIDListResponse;
 import iso.std.iso_iec._24727.tech.schema.DIDQualifierType;
 import iso.std.iso_iec._24727.tech.schema.DIDUpdate;
+import iso.std.iso_iec._24727.tech.schema.DIDUpdateDataType;
 import iso.std.iso_iec._24727.tech.schema.DIDUpdateResponse;
 import iso.std.iso_iec._24727.tech.schema.DSICreate;
 import iso.std.iso_iec._24727.tech.schema.DSICreateResponse;
@@ -308,7 +309,7 @@ public class TinySALTest {
     /**
      * Test of terminate method, of class TinySAL.
      */
-    @Test(priority = 100)
+    @Test(priority = 200)
     public void testTerminate() {
 	System.out.println("terminate");
 	Terminate parameters = new Terminate();
@@ -407,7 +408,7 @@ public class TinySALTest {
     /**
      * Test of cardApplicationDisconnect method, of class TinySAL.
      */
-    @Test(priority = 7)
+    @Test(priority = 100)
     public void testCardApplicationDisconnect() {
 	System.out.println("cardApplicationDisconnect");
 	// test normal case
@@ -1504,12 +1505,112 @@ public class TinySALTest {
     /**
      * Test of didUpdate method, of class TinySAL.
      */
-    @Test(enabled=false)
-    public void testDidUpdate() {
-	System.out.println("didUpdate");
-	DIDUpdate parameters = new DIDUpdate();
-	DIDUpdateResponse result = instance.didUpdate(parameters);
-	assertEquals(ECardConstants.Major.ERROR, result.getResult().getResultMajor());
+    @Test(priority = 8) //8
+    public void testDidUpdate1() throws ParserConfigurationException {
+	System.out.println("didUpdate, PIN ATTRIBUTE, change PIN from 0000 to 1111");
+
+	// get path to IRMA
+	CardApplicationPath cardApplicationPath = new CardApplicationPath();
+	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
+	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+
+	// connect to IRMA
+	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
+	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+		.get(0));
+	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
+
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
+        DIDUpdate parameters = new DIDUpdate();
+	parameters.setDIDName("PIN.ATTRIBUTE");
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder builder = factory.newDocumentBuilder();
+	Document d = builder.newDocument();
+
+	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin.setTextContent("1111");
+	
+	Element elemOldPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
+	elemOldPin.setTextContent("0000");
+
+	Element elemAdminPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
+	elemAdminPin.setTextContent("000000");
+
+	DIDUpdateDataType didUpdateData = new DIDUpdateDataType();
+
+	didUpdateData.getAny().add(elemPin);
+	didUpdateData.getAny().add(elemOldPin);
+	didUpdateData.getAny().add(elemAdminPin);
+
+	didUpdateData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters.setConnectionHandle(result.getConnectionHandle());
+ 	parameters.setDIDUpdateData(didUpdateData);
+
+	DIDUpdateResponse result1 = instance.didUpdate(parameters);
+	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+
+	// check PIN 1111
+
+	System.out.println("didAuthenticate, PIN ATTRIBUTE, check PIN 1111");
+
+	DIDAuthenticate parameters1 = new DIDAuthenticate();
+	parameters1.setDIDName("PIN.ATTRIBUTE");
+	DocumentBuilderFactory factory1 = DocumentBuilderFactory.newInstance();
+	factory1.setNamespaceAware(true);
+	DocumentBuilder builder1 = factory.newDocumentBuilder();
+	Document d1 = builder1.newDocument();
+	Element elemPin1 = d1.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin1.setTextContent("1111");
+	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
+	didAuthenticationData.getAny().add(elemPin1);
+
+	parameters1.setAuthenticationProtocolData(didAuthenticationData);
+	parameters1.setConnectionHandle(result.getConnectionHandle());
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters1.setAuthenticationProtocolData(didAuthenticationData);
+	DIDAuthenticateResponse result2 = instance.didAuthenticate(parameters1);
+
+	assertEquals(result2.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
+	assertEquals(ECardConstants.Major.OK, result2.getResult().getResultMajor());
+	assertEquals(result2.getAuthenticationProtocolData().getAny().size(), 0);
+
+	// change again to 0000
+
+	System.out.println("didUpdate, PIN ATTRIBUTE, initiliaze PIN to 0000");
+
+        DIDUpdate parameters4 = new DIDUpdate();
+	parameters4.setDIDName("PIN.ATTRIBUTE");
+	DocumentBuilderFactory factory4 = DocumentBuilderFactory.newInstance();
+	factory4.setNamespaceAware(true);
+	DocumentBuilder builder4 = factory4.newDocumentBuilder();
+	Document d4 = builder4.newDocument();
+
+	Element elemPin4 = d4.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin4.setTextContent("0000");
+	
+	Element elemOldPin4 = d4.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
+	elemOldPin4.setTextContent("0000");
+
+	Element elemAdminPin4 = d4.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
+	elemAdminPin4.setTextContent("000000");
+
+	DIDUpdateDataType didUpdateData4 = new DIDUpdateDataType();
+
+	didUpdateData4.getAny().add(elemPin4);
+	didUpdateData4.getAny().add(elemOldPin4);
+	didUpdateData4.getAny().add(elemAdminPin4);
+
+	didUpdateData4.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters4.setConnectionHandle(result.getConnectionHandle());
+ 	parameters4.setDIDUpdateData(didUpdateData4);
+
+	DIDUpdateResponse result4 = instance.didUpdate(parameters4);
+	assertEquals(ECardConstants.Major.OK, result4.getResult().getResultMajor());
+
     }
 
     /**

@@ -74,6 +74,22 @@ public class PINUtils {
 	return transmit;
     }
 
+    public static Transmit buildChangeReferenceTransmit(String rawPIN, String rawOldPIN, String rawAdminPIN, PasswordAttributesType attributes, byte[] template,
+	    byte[] slotHandle) throws UtilException {
+	// concatenate template with encoded pin
+    	byte[] pin = PINUtils.encodePin(rawPIN, attributes);
+	byte[] pinCmd = ByteUtils.concatenate(template, (byte) pin.length);
+	pinCmd = ByteUtils.concatenate(pinCmd, pin);
+
+	Transmit transmit = new Transmit();
+	transmit.setSlotHandle(slotHandle);
+	InputAPDUInfoType pinApdu = new InputAPDUInfoType();
+	pinApdu.setInputAPDU(pinCmd);
+	pinApdu.getAcceptableStatusCode().add(new byte[] {(byte)0x90, (byte)0x00});
+	transmit.getInputAPDUInfo().add(pinApdu);
+	return transmit;
+    }
+
     public static byte[] encodePin(String rawPin, PasswordAttributesType attributes) throws UtilException {
 	// extract attributes
 	PasswordTypeType pwdType = attributes.getPwdType();

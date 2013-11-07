@@ -22,13 +22,35 @@
 
 package org.openecard.sal.protocol.pincompare;
 
+import iso.std.iso_iec._24727.tech.schema.ConnectionHandleType;
+import iso.std.iso_iec._24727.tech.schema.DIDAuthenticate;
+import iso.std.iso_iec._24727.tech.schema.DIDAuthenticateResponse;
+import iso.std.iso_iec._24727.tech.schema.DIDScopeType;
+import iso.std.iso_iec._24727.tech.schema.DIDStructureType;
 import iso.std.iso_iec._24727.tech.schema.DIDUpdate;
 import iso.std.iso_iec._24727.tech.schema.DIDUpdateResponse;
+import iso.std.iso_iec._24727.tech.schema.DifferentialIdentityServiceActionName;
+import iso.std.iso_iec._24727.tech.schema.InputUnitType;
+import iso.std.iso_iec._24727.tech.schema.PasswordAttributesType;
+import iso.std.iso_iec._24727.tech.schema.PinInputType;
+import iso.std.iso_iec._24727.tech.schema.Transmit;
+import iso.std.iso_iec._24727.tech.schema.TransmitResponse;
+import iso.std.iso_iec._24727.tech.schema.VerifyUser;
+import iso.std.iso_iec._24727.tech.schema.VerifyUserResponse;
+import java.math.BigInteger;
 import java.util.Map;
 import org.openecard.addon.sal.FunctionType;
 import org.openecard.addon.sal.ProtocolStep;
+import org.openecard.common.ECardException;
 import org.openecard.common.WSHelper;
+import org.openecard.common.apdu.common.CardResponseAPDU;
 import org.openecard.common.interfaces.Dispatcher;
+import org.openecard.common.sal.Assert;
+import org.openecard.common.sal.anytype.PINCompareMarkerType;
+import org.openecard.common.sal.state.CardStateEntry;
+import org.openecard.common.sal.util.SALUtils;
+import org.openecard.common.util.PINUtils;
+import org.openecard.sal.protocol.pincompare.anytype.PINCompareDIDUpdateDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +83,70 @@ public class DIDUpdateStep implements ProtocolStep<DIDUpdate, DIDUpdateResponse>
 
     @Override
     public DIDUpdateResponse perform(DIDUpdate request, Map<String, Object> internalData) {
-	return WSHelper.makeResponse(DIDUpdateResponse.class, WSHelper.makeResultUnknownError("Not supported yet."));
-    }
+	DIDUpdateResponse response = WSHelper.makeResponse(DIDUpdateResponse.class, WSHelper.makeResultOK());
+	
+	try {
+	    ConnectionHandleType connectionHandle = SALUtils.getConnectionHandle(request);
+	    String didName = SALUtils.getDIDName(request);
+	    CardStateEntry cardStateEntry = SALUtils.getCardStateEntry(internalData, connectionHandle);
 
+	    byte[] cardApplication = connectionHandle.getCardApplication();
+	    	    
+	    PINCompareDIDUpdateDataType pinCompare = new PINCompareDIDUpdateDataType(request.getDIDUpdateData());
+
+	    DIDStructureType didStructure = cardStateEntry.getDIDStructure(didName, cardApplication);
+	    PINCompareMarkerType pinCompareMarker = new PINCompareMarkerType(didStructure.getDIDMarker());
+	    byte[] slotHandle = connectionHandle.getSlotHandle();
+	    PasswordAttributesType attributes = pinCompareMarker.getPasswordAttributes();
+	    
+	    String rawPIN    = pinCompare.getPIN();
+	    String rawOldPIN = pinCompare.getOldPIN();
+	    String rawAdminPIN = pinCompare.getAdminPIN();
+	    
+	    System.out.println("[*] DIDUpdateStep, new PIN: " + rawPIN);
+	    System.out.println("[*] DIDUpdateStep, old PIN: " + rawOldPIN);
+	    System.out.println("[*] DIDUpdateStep, adminPIN: " + rawAdminPIN);
+	    
+	    if (didName.equals("PIN.ATTRIBUTE")) {
+	    
+	        byte[] template_verify = new byte[] { 0x00, 0x20, 0x00, 0x01 };
+	        byte[] responseCode_verify;
+
+	        // we first send the admin (card) pin
+
+	        Transmit verifyTransmit = PINUtils.buildVerifyTransmit(rawAdminPIN, attributes, template_verify, slotHandle);
+	        TransmitResponse transResp = (TransmitResponse) dispatcher.deliver(verifyTransmit);
+	        WSHelper.checkResult(transResp);
+	        responseCode_verify = transResp.getOutputAPDU().get(0);
+	    
+	        CardResponseAPDU verifyReferenceResponseAPDU = new CardResponseAPDU(responseCode_verify);
+
+	        cardStateEntry.addAuthenticated(didName, cardApplication);
+
+	        // then we update the attribute (credential) pin
+
+	        byte[] template_change = new byte[] { 0x00, 0x24, 0x00, 0x00 };
+	        byte[] responseCode_change;
+
+	        Transmit changeTransmit = PINUtils.buildVerifyTransmit(rawPIN, attributes, template_change, slotHandle);
+	        TransmitResponse changeResp = (TransmitResponse) dispatcher.deliver(changeTransmit);
+	        WSHelper.checkResult(changeResp);
+	        responseCode_change = changeResp.getOutputAPDU().get(0);
+	    
+	        CardResponseAPDU changeReferenceResponseAPDU = new CardResponseAPDU(responseCode_change);
+
+	        cardStateEntry.addAuthenticated(didName, cardApplication);
+            } else {
+            }
+	} catch (ECardException e) {
+	    logger.error(e.getMessage(), e);
+	    response.setResult(e.getResult());
+	} catch (Exception e) {
+	    logger.error(e.getMessage(), e);
+	    response.setResult(WSHelper.makeResult(e));
+	}
+
+	return response;
+
+    }
 }
