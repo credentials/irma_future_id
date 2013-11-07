@@ -136,8 +136,26 @@ public class DIDUpdateStep implements ProtocolStep<DIDUpdate, DIDUpdateResponse>
 	        CardResponseAPDU changeReferenceResponseAPDU = new CardResponseAPDU(responseCode_change);
 
 	        cardStateEntry.addAuthenticated(didName, cardApplication);
+  
+            } else if (didName.equals("PIN.ADMIN")) {
+
+                System.out.println("Dentro de pin admin en UPDATE!!!");
+
+	        byte[] template_change_admin = new byte[] { 0x00, 0x24, 0x00, 0x01 };
+	        byte[] responseCode_change_admin;
+
+	        Transmit changeAdminTransmit = PINUtils.buildChangeReferenceTransmit(rawPIN, rawOldPIN, rawAdminPIN, attributes, template_change_admin, slotHandle);
+	        TransmitResponse changeAdminResp = (TransmitResponse) dispatcher.deliver(changeAdminTransmit);
+	        WSHelper.checkResult(changeAdminResp);
+	        responseCode_change_admin = changeAdminResp.getOutputAPDU().get(0);
+	    
+	        CardResponseAPDU changeAdminReferenceResponseAPDU = new CardResponseAPDU(responseCode_change_admin);
+
+	        cardStateEntry.addAuthenticated(didName, cardApplication);
+            
             } else {
-            }
+                // XXXX: TODO
+            }              
 	} catch (ECardException e) {
 	    logger.error(e.getMessage(), e);
 	    response.setResult(e.getResult());

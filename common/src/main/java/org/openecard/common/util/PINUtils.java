@@ -74,13 +74,18 @@ public class PINUtils {
 	return transmit;
     }
 
-    public static Transmit buildChangeReferenceTransmit(String rawPIN, String rawOldPIN, String rawAdminPIN, PasswordAttributesType attributes, byte[] template,
+    public static Transmit buildChangeReferenceTransmit(String rawOldPIN, String rawPIN, String rawAdminPIN, PasswordAttributesType attributes, byte[] template,
 	    byte[] slotHandle) throws UtilException {
 	// concatenate template with encoded pin
-    	byte[] pin = PINUtils.encodePin(rawPIN, attributes);
-	byte[] pinCmd = ByteUtils.concatenate(template, (byte) pin.length);
-	pinCmd = ByteUtils.concatenate(pinCmd, pin);
+    	
+    	byte[] oldPin = PINUtils.encodePin(rawOldPIN, attributes);
+    	byte[] newPin = PINUtils.encodePin(rawPIN, attributes);
 
+	byte[] pinCmd = ByteUtils.concatenate(template, (byte) (oldPin.length + newPin.length));
+
+	pinCmd = ByteUtils.concatenate(pinCmd, newPin);
+	pinCmd = ByteUtils.concatenate(pinCmd, oldPin);
+	
 	Transmit transmit = new Transmit();
 	transmit.setSlotHandle(slotHandle);
 	InputAPDUInfoType pinApdu = new InputAPDUInfoType();
