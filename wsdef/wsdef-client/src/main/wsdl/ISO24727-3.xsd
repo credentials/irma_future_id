@@ -229,7 +229,7 @@
 		</restriction>
 	</simpleType>
 
-	<complexType name="DIDUpdateDataType" abstract="true">
+	<complexType name="DIDUpdateDataType">
 		<complexContent>
 			<extension base="anyType">
 				<attribute name="Protocol" type="anyURI" use="required" />
