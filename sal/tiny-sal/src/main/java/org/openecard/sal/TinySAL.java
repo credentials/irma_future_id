@@ -1873,7 +1873,7 @@ public class TinySAL implements SAL {
     @Override
     public DIDUpdateResponse didUpdate(DIDUpdate request) {
 	DIDUpdateResponse response = WSHelper.makeResponse(DIDUpdateResponse.class, WSHelper.makeResultOK());
-
+	
 	try {
             ConnectionHandleType connectionHandle = SALUtils.getConnectionHandle(request);
             byte[] cardApplicationID = connectionHandle.getCardApplication();
@@ -1891,9 +1891,10 @@ public class TinySAL implements SAL {
             Assert.securityConditionDID(cardStateEntry, cardApplicationID, didName, DifferentialIdentityServiceActionName.DID_UPDATE);
 
 	    String protocolURI = didStructure.getDIDMarker().getProtocol();
-	    SALProtocol protocol = getProtocol(connectionHandle, protocolURI);
+	    SALProtocol protocol = getProtocol(connectionHandle, protocolURI);	    
+	    
 	    if (protocol.hasNextStep(FunctionType.DIDUpdate)) {
-		response = protocol.didUpdate(request);
+		response = protocol.didUpdate(request);		
 		removeFinishedProtocol(connectionHandle, protocolURI, protocol);
 	    } else {
 		throw new InappropriateProtocolForActionException("DIDUpdate", protocol.toString());
@@ -1971,9 +1972,7 @@ public class TinySAL implements SAL {
 	    Assert.assertIncorrectParameter(didAuthenticationData, "The parameter AuthenticationProtocolData is empty.");
 
 	    String protocolURI = didAuthenticationData.getProtocol();
-	    
-	    System.out.println("DIDAuthenticate - protocolURI: " + protocolURI);
-	    
+	    	    
 	    // FIXME: workaround for missing protocol URI from eID-Servers
 	    if (protocolURI == null) {
 		logger.warn("ProtocolURI was null");
@@ -1997,7 +1996,7 @@ public class TinySAL implements SAL {
 	    ConnectionHandleType samConnectionHandle = request.getSAMConnectionHandle();
 	    //Assert.assertIncorrectParameter(samConnectionHandle, "The parameter SAMConnectionHandle is empty.");
 
-            //Assert.securityConditionDID(cardStateEntry, cardApplicationID, didName, DifferentialIdentityServiceActionName.DID_AUTHENTICATE);
+            Assert.securityConditionDID(cardStateEntry, cardApplicationID, didName, DifferentialIdentityServiceActionName.DID_AUTHENTICATE);
 
 	    SALProtocol protocol = getProtocol(connectionHandle, protocolURI);
 	    if (protocol.hasNextStep(FunctionType.DIDAuthenticate)) {
