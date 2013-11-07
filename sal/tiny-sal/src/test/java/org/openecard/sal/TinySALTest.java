@@ -1773,7 +1773,7 @@ public class TinySALTest {
      *
      * @throws ParserConfigurationException
      */
-    @Test(enabled = false) // 6
+    @Test(priority = 6) // 6
     public void testDidAuthenticate1() throws ParserConfigurationException {
 	System.out.println("didAuthenticate, PIN ATTRIBUTE");
 
@@ -1822,7 +1822,7 @@ public class TinySALTest {
      *
      * @throws ParserConfigurationException
      */
-    @Test(enabled = false)//6
+    @Test(priority = 6)//6
     public void testDidAuthenticate2() throws ParserConfigurationException {
 	System.out.println("didAuthenticate, PIN ADMIN");
 
