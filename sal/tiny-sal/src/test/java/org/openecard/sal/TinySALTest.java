@@ -1503,9 +1503,69 @@ public class TinySALTest {
     }
 
     /**
+     * Test of didDelete method, of class TinySAL.
+     */
+    @Test(enabled=false)
+    public void testDidDelete() {
+	System.out.println("didDelete");
+	DIDDelete parameters = new DIDDelete();
+	DIDDeleteResponse result = instance.didDelete(parameters);
+	assertEquals(ECardConstants.Major.ERROR, result.getResult().getResultMajor());
+    }
+
+    /**
+     * Test of didAuthenticate method, of class TinySAL.
+     *
+     * @throws ParserConfigurationException
+     */
+    @Test(priority = 6) // 6
+    public void testDidAuthenticate1() throws ParserConfigurationException {
+	System.out.println("didAuthenticate, PIN ATTRIBUTE");
+
+	// get path to IRMA
+	CardApplicationPath cardApplicationPath = new CardApplicationPath();
+	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
+	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+
+	// connect to IRMA
+	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
+	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+		.get(0));
+	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
+
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
+	DIDAuthenticate parameters = new DIDAuthenticate();
+	parameters.setDIDName("PIN.ATTRIBUTE");
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder builder = factory.newDocumentBuilder();
+	Document d = builder.newDocument();
+	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin.setTextContent("0000");
+	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
+	didAuthenticationData.getAny().add(elemPin);
+
+	//PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
+	//	didAuthenticationData);
+
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	parameters.setConnectionHandle(result.getConnectionHandle());
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
+
+	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
+	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
+    }
+
+    /**
      * Test of didUpdate method, of class TinySAL.
      */
-    @Test(enabled = false) //8
+    @Test(priority = 7) //7
     public void testDidUpdate1() throws ParserConfigurationException {
 	System.out.println("didUpdate, PIN ATTRIBUTE, change PIN from 0000 to 1111");
 
@@ -1614,215 +1674,11 @@ public class TinySALTest {
     }
 
     /**
-     * Test of didUpdate method, of class TinySAL.
-     */
-    @Test(enabled = false) //9
-    public void testDidUpdate2() throws ParserConfigurationException {
-	System.out.println("didUpdate, PIN ADMIN, change PIN from 000000 to 111111");
-
-	// get path to IRMA
-	CardApplicationPath cardApplicationPath = new CardApplicationPath();
-	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
-	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
-	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
-
-	// connect to IRMA
-	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
-	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
-		.get(0));
-	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
-
-	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
-
-	// change PIN from 000000 to 111111
-
-        DIDUpdate parameters = new DIDUpdate();
-	parameters.setDIDName("PIN.ADMIN");
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	factory.setNamespaceAware(true);
-	DocumentBuilder builder = factory.newDocumentBuilder();
-	Document d = builder.newDocument();
-
-	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin.setTextContent("111111");
-	
-	Element elemOldPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
-	elemOldPin.setTextContent("000000");
-
-	Element elemAdminPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
-	elemAdminPin.setTextContent("000000");
-
-	DIDUpdateDataType didUpdateData = new DIDUpdateDataType();
-
-	didUpdateData.getAny().add(elemPin);
-	didUpdateData.getAny().add(elemOldPin);
-	didUpdateData.getAny().add(elemAdminPin);
-
-	didUpdateData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
-	parameters.setConnectionHandle(result.getConnectionHandle());
- 	parameters.setDIDUpdateData(didUpdateData);
-
-	DIDUpdateResponse result1 = instance.didUpdate(parameters);
-//	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
-
-        // change PIN from 111111 000000
-
-        DIDUpdate parameters2 = new DIDUpdate();
-	parameters2.setDIDName("PIN.ADMIN");
-	DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
-	factory2.setNamespaceAware(true);
-	DocumentBuilder builder2 = factory2.newDocumentBuilder();
-	Document d2 = builder2.newDocument();
-
-	Element elemPin2 = d2.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin2.setTextContent("000000");
-	
-	Element elemOldPin2 = d2.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
-	elemOldPin2.setTextContent("111111");
-
-	Element elemAdminPin2 = d2.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
-	elemAdminPin2.setTextContent("000000");
-
-	DIDUpdateDataType didUpdateData2 = new DIDUpdateDataType();
-
-	didUpdateData2.getAny().add(elemPin2);
-	didUpdateData2.getAny().add(elemOldPin2);
-	didUpdateData2.getAny().add(elemAdminPin2);
-
-	didUpdateData2.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
-	parameters2.setConnectionHandle(result.getConnectionHandle());
- 	parameters2.setDIDUpdateData(didUpdateData2);
-
-	DIDUpdateResponse result2 = instance.didUpdate(parameters2);
-//	assertEquals(ECardConstants.Major.OK, result2.getResult().getResultMajor());
-
-	// check PIN 1111
-/*
-	System.out.println("didAuthenticate, PIN ATTRIBUTE, check PIN 1111");
-
-	DIDAuthenticate parameters1 = new DIDAuthenticate();
-	parameters1.setDIDName("PIN.ATTRIBUTE");
-	DocumentBuilderFactory factory1 = DocumentBuilderFactory.newInstance();
-	factory1.setNamespaceAware(true);
-	DocumentBuilder builder1 = factory.newDocumentBuilder();
-	Document d1 = builder1.newDocument();
-	Element elemPin1 = d1.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin1.setTextContent("1111");
-	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
-	didAuthenticationData.getAny().add(elemPin1);
-
-	parameters1.setAuthenticationProtocolData(didAuthenticationData);
-	parameters1.setConnectionHandle(result.getConnectionHandle());
-	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
-	parameters1.setAuthenticationProtocolData(didAuthenticationData);
-	DIDAuthenticateResponse result2 = instance.didAuthenticate(parameters1);
-
-	assertEquals(result2.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
-	assertEquals(ECardConstants.Major.OK, result2.getResult().getResultMajor());
-	assertEquals(result2.getAuthenticationProtocolData().getAny().size(), 0);
-
-	// change again to 0000
-
-	System.out.println("didUpdate, PIN ATTRIBUTE, initiliaze PIN to 0000");
-
-        DIDUpdate parameters4 = new DIDUpdate();
-	parameters4.setDIDName("PIN.ATTRIBUTE");
-	DocumentBuilderFactory factory4 = DocumentBuilderFactory.newInstance();
-	factory4.setNamespaceAware(true);
-	DocumentBuilder builder4 = factory4.newDocumentBuilder();
-	Document d4 = builder4.newDocument();
-
-	Element elemPin4 = d4.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin4.setTextContent("0000");
-	
-	Element elemOldPin4 = d4.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
-	elemOldPin4.setTextContent("0000");
-
-	Element elemAdminPin4 = d4.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
-	elemAdminPin4.setTextContent("000000");
-
-	DIDUpdateDataType didUpdateData4 = new DIDUpdateDataType();
-
-	didUpdateData4.getAny().add(elemPin4);
-	didUpdateData4.getAny().add(elemOldPin4);
-	didUpdateData4.getAny().add(elemAdminPin4);
-
-	didUpdateData4.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
-	parameters4.setConnectionHandle(result.getConnectionHandle());
- 	parameters4.setDIDUpdateData(didUpdateData4);
-
-	DIDUpdateResponse result4 = instance.didUpdate(parameters4);
-	assertEquals(ECardConstants.Major.OK, result4.getResult().getResultMajor());*/
-
-    }
-
-    /**
-     * Test of didDelete method, of class TinySAL.
-     */
-    @Test(enabled=false)
-    public void testDidDelete() {
-	System.out.println("didDelete");
-	DIDDelete parameters = new DIDDelete();
-	DIDDeleteResponse result = instance.didDelete(parameters);
-	assertEquals(ECardConstants.Major.ERROR, result.getResult().getResultMajor());
-    }
-
-    /**
      * Test of didAuthenticate method, of class TinySAL.
      *
      * @throws ParserConfigurationException
      */
-    @Test(priority = 6) // 6
-    public void testDidAuthenticate1() throws ParserConfigurationException {
-	System.out.println("didAuthenticate, PIN ATTRIBUTE");
-
-	// get path to IRMA
-	CardApplicationPath cardApplicationPath = new CardApplicationPath();
-	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
-	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
-	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
-
-	// connect to IRMA
-	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
-	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
-		.get(0));
-	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
-
-	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
-
-	DIDAuthenticate parameters = new DIDAuthenticate();
-	parameters.setDIDName("PIN.ATTRIBUTE");
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	factory.setNamespaceAware(true);
-	DocumentBuilder builder = factory.newDocumentBuilder();
-	Document d = builder.newDocument();
-	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin.setTextContent("0000");
-	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
-	didAuthenticationData.getAny().add(elemPin);
-
-	//PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
-	//	didAuthenticationData);
-
-	parameters.setAuthenticationProtocolData(didAuthenticationData);
-	parameters.setConnectionHandle(result.getConnectionHandle());
-	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
-	parameters.setAuthenticationProtocolData(didAuthenticationData);
-	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
-
-	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
-	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
-	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
-    }
-
-    /**
-     * Test of didAuthenticate method, of class TinySAL.
-     *
-     * @throws ParserConfigurationException
-     */
-    @Test(priority = 6)//6
+    @Test(priority = 8)//8
     public void testDidAuthenticate2() throws ParserConfigurationException {
 	System.out.println("didAuthenticate, PIN ADMIN");
 
@@ -1852,9 +1708,6 @@ public class TinySALTest {
 	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
 	didAuthenticationData.getAny().add(elemPin);
 
-	//PINCompareDIDAuthenticateInputType pinCompareDIDAuthenticateInputType = new PINCompareDIDAuthenticateInputType(
-	//	didAuthenticationData);
-
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	parameters.setConnectionHandle(result.getConnectionHandle());
 	didAuthenticationData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
@@ -1864,6 +1717,122 @@ public class TinySALTest {
 	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
 	assertEquals(result1.getAuthenticationProtocolData().getAny().size(), 0);
+    }
+
+    /**
+     * Test of didUpdate method, of class TinySAL.
+     */
+    @Test(priority = 9) //9
+    public void testDidUpdate2() throws ParserConfigurationException {
+	System.out.println("didUpdate, PIN ADMIN, change PIN from 000000 to 111111 -- connecting");
+
+	// get path to IRMA
+	CardApplicationPath cardApplicationPath = new CardApplicationPath();
+	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
+	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+
+	// connect to IRMA
+	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
+	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+		.get(0));
+	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
+
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
+	System.out.println("didUpdate, PIN ADMIN, change PIN from 000000 to 111111 -- connected");
+
+	// change PIN from 000000 to 111111
+
+        DIDUpdate parameters = new DIDUpdate();
+	parameters.setDIDName("PIN.ADMIN");
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder builder = factory.newDocumentBuilder();
+	Document d = builder.newDocument();
+
+	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin.setTextContent("111111");
+	
+	Element elemOldPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
+	elemOldPin.setTextContent("000000");
+
+	Element elemAdminPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
+	elemAdminPin.setTextContent("000000");
+
+	DIDUpdateDataType didUpdateData = new DIDUpdateDataType();
+
+	didUpdateData.getAny().add(elemPin);
+	didUpdateData.getAny().add(elemOldPin);
+	didUpdateData.getAny().add(elemAdminPin);
+
+	didUpdateData.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters.setConnectionHandle(result.getConnectionHandle());
+ 	parameters.setDIDUpdateData(didUpdateData);
+
+	System.out.println("didUpdate, PIN ADMIN, change PIN from 000000 to 111111 -- updating");
+
+	DIDUpdateResponse result1 = instance.didUpdate(parameters);
+	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+
+	// check PIN 111111
+
+	System.out.println("didUpdate, PIN ADMIN, change PIN from 000000 to 111111 -- checking new pin 111111");
+
+	DIDAuthenticate parameters_check = new DIDAuthenticate();
+	parameters_check.setDIDName("PIN.ADMIN");
+	DocumentBuilderFactory factory_check = DocumentBuilderFactory.newInstance();
+	factory_check.setNamespaceAware(true);
+	DocumentBuilder builder_check = factory_check.newDocumentBuilder();
+	Document d_check = builder_check.newDocument();
+	Element elemPin_check = d_check.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin_check.setTextContent("111111");
+	DIDAuthenticationDataType didAuthenticationData_check = new DIDAuthenticationDataType();
+	didAuthenticationData_check.getAny().add(elemPin);
+
+	parameters_check.setAuthenticationProtocolData(didAuthenticationData_check);
+	parameters_check.setConnectionHandle(result.getConnectionHandle());
+	didAuthenticationData_check.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters_check.setAuthenticationProtocolData(didAuthenticationData_check);
+	DIDAuthenticateResponse result1_check = instance.didAuthenticate(parameters_check);
+
+	assertEquals(result1_check.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.PIN_COMPARE);
+	assertEquals(ECardConstants.Major.OK, result1_check.getResult().getResultMajor());
+	assertEquals(result1_check.getAuthenticationProtocolData().getAny().size(), 0);
+
+        // change PIN from 111111 000000
+
+        DIDUpdate parameters2 = new DIDUpdate();
+	parameters2.setDIDName("PIN.ADMIN");
+	DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
+	factory2.setNamespaceAware(true);
+	DocumentBuilder builder2 = factory2.newDocumentBuilder();
+	Document d2 = builder2.newDocument();
+
+	Element elemPin2 = d2.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin2.setTextContent("000000");
+	
+	Element elemOldPin2 = d2.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "OldPin");
+	elemOldPin2.setTextContent("111111");
+
+	Element elemAdminPin2 = d2.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "AdminPin");
+	elemAdminPin2.setTextContent("000000");
+
+	DIDUpdateDataType didUpdateData2 = new DIDUpdateDataType();
+
+	didUpdateData2.getAny().add(elemPin2);
+	didUpdateData2.getAny().add(elemOldPin2);
+	didUpdateData2.getAny().add(elemAdminPin2);
+
+	didUpdateData2.setProtocol(ECardConstants.Protocol.PIN_COMPARE);
+	parameters2.setConnectionHandle(result.getConnectionHandle());
+ 	parameters2.setDIDUpdateData(didUpdateData2);
+
+	System.out.println("didUpdate, PIN ADMIN, change PIN from 111111 to 000000 -- updating");
+
+	DIDUpdateResponse result2 = instance.didUpdate(parameters2);
+	assertEquals(ECardConstants.Major.OK, result2.getResult().getResultMajor());
     }
 
     /**

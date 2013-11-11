@@ -139,8 +139,6 @@ public class DIDUpdateStep implements ProtocolStep<DIDUpdate, DIDUpdateResponse>
   
             } else if (didName.equals("PIN.ADMIN")) {
 
-                System.out.println("Dentro de pin admin en UPDATE!!!");
-
 	        byte[] template_change_admin = new byte[] { 0x00, 0x24, 0x00, 0x01 };
 	        byte[] responseCode_change_admin;
 
