@@ -91,89 +91,44 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
         Vector<byte[]> list = new Vector<byte[]>();
 
 	try {
+	    	    
 	    ConnectionHandleType connectionHandle = SALUtils.getConnectionHandle(request);
 	    String didName = SALUtils.getDIDName(request);
 	    CardStateEntry cardStateEntry = SALUtils.getCardStateEntry(internalData, connectionHandle);
+	    
 	    IRMASTATUSDIDAuthenticateInputType pinCompareInput = new IRMASTATUSDIDAuthenticateInputType(request.getAuthenticationProtocolData());
 	    IRMASTATUSDIDAuthenticateOutputType pinCompareOutput = pinCompareInput.getOutputType();
 
 	    byte[] cardApplication;
+	    
 	    if (request.getDIDScope() != null && request.getDIDScope().equals(DIDScopeType.GLOBAL)) {
 		cardApplication = cardStateEntry.getImplicitlySelectedApplicationIdentifier();
 	    } else {
 		cardApplication = connectionHandle.getCardApplication();
 	    }
+	    
 	    Assert.securityConditionDID(cardStateEntry, cardApplication, didName, DifferentialIdentityServiceActionName.DID_AUTHENTICATE);
-
+	    
 	    DIDStructureType didStructure = cardStateEntry.getDIDStructure(didName, cardApplication);
 	    IRMASTATUSMarkerType pinCompareMarker = new IRMASTATUSMarkerType(didStructure.getDIDMarker());
+	    	    
 	    byte keyRef = pinCompareMarker.getPINRef().getKeyRef()[0];
 	    byte[] slotHandle = connectionHandle.getSlotHandle();
+	    
 	    PasswordAttributesType attributes = pinCompareMarker.getPasswordAttributes();
 	    String rawPIN = pinCompareInput.getPIN();
-	    byte[] template = new byte[] { 0x00, 0x20, 0x00, 0x01 };
+	    
+	    byte[] template = new byte[] { 0x00, 0x20, 0x00};
 	    byte[] responseCode;
-
-	    // [TR-03112-6] The structure of the template corresponds to the
-	    // structure of an APDU for the VERIFY command in accordance
-	    // with [ISO7816-4] (Section 7.5.6).
-	    if (rawPIN == null || rawPIN.isEmpty()) {
-		VerifyUser verify = new VerifyUser();
-		verify.setSlotHandle(slotHandle);
-
-		InputUnitType inputUnit = new InputUnitType();
-		verify.setInputUnit(inputUnit);
-
-		PinInputType pinInput = new PinInputType();
-		inputUnit.setPinInput(pinInput);
-		pinInput.setIndex(BigInteger.ZERO);
-		pinInput.setPasswordAttributes(attributes);
-
-		verify.setTemplate(template);
-		VerifyUserResponse verifyR = (VerifyUserResponse) dispatcher.deliver(verify);
-		WSHelper.checkResult(verifyR);
-		responseCode = verifyR.getResponse();
-	    } else {
-		Transmit verifyTransmit = PINUtils.buildVerifyTransmit(rawPIN, attributes, template, slotHandle);
-		TransmitResponse transResp = (TransmitResponse) dispatcher.deliver(verifyTransmit);
-		WSHelper.checkResult(transResp);
-		responseCode = transResp.getOutputAPDU().get(0);
-		
-		// getSTATUS
-
-                byte[] template_get_log = new byte[] { (byte) 0x80, (byte) 0x3B };
-                byte[] responseCode_get_log;
-
-                /* Taken from IdemixService.java, Pim Vullers, Radboud University Nijmegen, Copyright 2011 */
-                
-                int LOG_SIZE = 30;
-                int LOG_ENTRY_SIZE = 16;
-                byte LOG_ENTRIES_PER_APDU = 255 / 16;
-                
-                
-                for (byte start_entry = 0; start_entry < LOG_SIZE;
-                     start_entry = (byte) (start_entry + LOG_ENTRIES_PER_APDU)) {
-                                                                                                  
-                         Transmit getLogTransmit = IRMAUtils.buildGetLog(template_get_log, (byte) start_entry, (byte) 0x00, slotHandle);
-                         TransmitResponse transRespGetLog = (TransmitResponse) dispatcher.deliver(getLogTransmit);
-                         byte[] data = transRespGetLog.getOutputAPDU().get(0);
+            
+            Transmit buildGetPinStatus = IRMAUtils.buildGetPinStatus(template, (byte) keyRef, slotHandle);                                                                                                  
+            TransmitResponse transRespGetPinStatus = (TransmitResponse) dispatcher.deliver(buildGetPinStatus);
+            
+            byte[] data = transRespGetPinStatus.getOutputAPDU().get(0);
                          
-                         
-                         for (int entry = 0; entry < LOG_ENTRIES_PER_APDU
-                             && entry + start_entry < LOG_SIZE; entry++) {
-                                                                     
-                                 byte[] log_entry = Arrays.copyOfRange(data, LOG_ENTRY_SIZE
-                                                                       * entry, LOG_ENTRY_SIZE * (entry + 1));
-                                                                                                             
-                                 list.add(log_entry);
-                         }                                                                                                                            
-                         
-                }
-	    }
-
-            pinCompareOutput.setLogList(list);
+            pinCompareOutput.setPinStatus(data);
             response.setAuthenticationProtocolData(pinCompareOutput.getAuthDataType());	
-	
+
 	} catch (ECardException e) {
 	    logger.error(e.getMessage(), e);
 	    response.setResult(e.getResult());
@@ -184,5 +139,4 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 
 	return response;
     }
-
 }

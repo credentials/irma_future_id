@@ -143,7 +143,7 @@ public class IRMASTATUSProtocolTest {
      */
     @Test(priority = 1)
     public void testDidAuthenticate3() throws ParserConfigurationException {
-/*	System.out.println("didAuthenticate, PIN ADMIN, 000000");
+	System.out.println("didAuthenticate, PIN ADMIN, STATUS");
 
 	// get path to IRMA
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
@@ -161,7 +161,7 @@ public class IRMASTATUSProtocolTest {
 	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
 
 	DIDAuthenticate parameters = new DIDAuthenticate();
-	parameters.setDIDName("IRMA.LOG");
+	parameters.setDIDName("IRMA.STATUS");
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	factory.setNamespaceAware(true);
 	DocumentBuilder builder = factory.newDocumentBuilder();
@@ -173,23 +173,14 @@ public class IRMASTATUSProtocolTest {
 
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	parameters.setConnectionHandle(result.getConnectionHandle());
-	didAuthenticationData.setProtocol(ECardConstants.Protocol.IRMA_LOG);
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.IRMA_STATUS);
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
 
-	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_LOG);
+	//assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_STATUS);
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
 	
-	System.out.println("## RAW IRMA LOW");
-		
-	for (Element element : result1.getAuthenticationProtocolData().getAny()) {
-	    try {
-                byte[] logByte = new BigInteger(element.getTextContent(),16).toByteArray();
-	        IdemixLogEntry logEntry  = new IdemixLogEntry(logByte);
-	                logEntry.print();
-        
-            } catch (Exception e) {
-            }
-	}*/
+        System.out.println(result1.getAuthenticationProtocolData().getAny().get(0).getTextContent());
+
     }
 }

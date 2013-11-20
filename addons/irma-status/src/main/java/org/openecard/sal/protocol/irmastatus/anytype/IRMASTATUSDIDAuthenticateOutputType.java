@@ -38,9 +38,8 @@ import java.util.Vector;
 public class IRMASTATUSDIDAuthenticateOutputType {
 
     private final AuthDataMap authMap;
-    Vector<byte[]> list;
+    byte[] pinStatus;
     
-
     /**
      * Creates a new PINCompareDIDAuthenticateOutputType.
      *
@@ -48,7 +47,6 @@ public class IRMASTATUSDIDAuthenticateOutputType {
      * @throws ParserConfigurationException
      */
     public IRMASTATUSDIDAuthenticateOutputType(DIDAuthenticationDataType data) throws ParserConfigurationException {
-        list = new Vector<byte[]>();
 	authMap = new AuthDataMap(data);
     }
 
@@ -66,8 +64,8 @@ public class IRMASTATUSDIDAuthenticateOutputType {
      *
      * @return Retry counter
      */
-    public Vector<byte[]> getLogList() {
-	return list;
+    public byte[] getPinStatus() {
+	return pinStatus;
     }
 
     /**
@@ -75,8 +73,8 @@ public class IRMASTATUSDIDAuthenticateOutputType {
      *
      * @param logEntry Retry counter
      */
-    public void setLogList(Vector<byte[]> list) {
-	this.list = list;	
+    public void setPinStatus(byte[] pinStatus) {
+	this.pinStatus = pinStatus;	
     }
 
     /**
@@ -89,18 +87,19 @@ public class IRMASTATUSDIDAuthenticateOutputType {
 	pinCompareOutput = new iso.std.iso_iec._24727.tech.schema.PinCompareDIDAuthenticateOutputType();
 	AuthDataResponse authResponse = authMap.createResponse(pinCompareOutput);
 	
-	for (byte[] byteArray: list) {
-            authResponse.addElement("logEntry", bytesToHex(byteArray));
-        }
+        authResponse.addElement("pinStatus", bytesToHex(pinStatus));
 	    
 	return authResponse.getResponse();
     }
 
-final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-public static String bytesToHex(byte[] bytes) {
-    char[] hexChars = new char[bytes.length * 2];
+    // XXXX: Replace this by Hex()
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
         int v;
-            for ( int j = 0; j < bytes.length; j++ ) {
+        
+        for ( int j = 0; j < bytes.length; j++ ) {
                     v = bytes[j] & 0xFF;
                             hexChars[j * 2] = hexArray[v >>> 4];
                                     hexChars[j * 2 + 1] = hexArray[v & 0x0F];

@@ -534,7 +534,7 @@
 					<iso:DIDProtocol>urn:oid:23.0.0.0.0.0.0.0.3</iso:DIDProtocol>
 					<iso:DIDMarker>
 						<iso:PinCompareMarker
-							Protocol="urn:oid:23.0.0.0.0.0.0.0.2">
+							Protocol="urn:oid:23.0.0.0.0.0.0.0.3">
 							<iso:PinRef>
 								<iso:KeyRef>00</iso:KeyRef>
 							</iso:PinRef>

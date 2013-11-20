@@ -88,6 +88,19 @@ public class IRMAUtils {
 	return transmit;
     }
 
+    public static Transmit buildGetPinStatus(byte[] template, byte pinRef, byte[] slotHandle) throws UtilException {
+
+	byte[] pinCmd = ByteUtils.concatenate(template, (byte) pinRef);
+
+	Transmit transmit = new Transmit();
+	transmit.setSlotHandle(slotHandle);
+	InputAPDUInfoType pinApdu = new InputAPDUInfoType();
+	pinApdu.setInputAPDU(pinCmd);
+	pinApdu.getAcceptableStatusCode().add(new byte[] {(byte)0x90, (byte)0x00});
+	transmit.getInputAPDUInfo().add(pinApdu);
+	return transmit;
+    }
+
     public static Transmit buildChangeReferenceTransmit(String rawOldPIN, String rawPIN, String rawAdminPIN, PasswordAttributesType attributes, byte[] template,
 	    byte[] slotHandle) throws UtilException {
 	// concatenate template with encoded pin
