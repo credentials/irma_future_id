@@ -58,6 +58,7 @@ public class AuthDataResponse {
 	}
 	e.setTextContent(data);
 	// add to list and return
+			
 	responseObj.getAny().add(e);
 	return e;
     }

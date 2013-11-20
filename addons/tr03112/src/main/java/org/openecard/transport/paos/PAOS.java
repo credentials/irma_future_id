@@ -44,7 +44,6 @@ import org.openecard.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.openecard.apache.http.protocol.BasicHttpContext;
 import org.openecard.apache.http.protocol.HttpContext;
 import org.openecard.apache.http.protocol.HttpRequestExecutor;
-import org.openecard.bouncycastle.crypto.tls.ProtocolVersion;
 import org.openecard.bouncycastle.crypto.tls.TlsAuthentication;
 import org.openecard.bouncycastle.crypto.tls.TlsClientProtocol;
 import org.openecard.common.DynamicContext;
@@ -284,13 +283,7 @@ public class PAOS {
 	    // loop and send makes a computer happy
 	    while (true) {
 		// set up connection to PAOS endpoint
-		StreamHttpClientConnection conn;
-		try {
-		    conn = openHttpStream(ProtocolVersion.TLSv11);
-		} catch (IOException ex) {
-		    logger.error("Connecting to the PAOS endpoint with TLSv1.1 failed. Falling back to TLSv1.0.", ex);
-		    conn = openHttpStream(ProtocolVersion.TLSv10);
-		}
+		StreamHttpClientConnection conn = openHttpStream();
 
 		HttpContext ctx = new BasicHttpContext();
 		HttpRequestExecutor httpexecutor = new HttpRequestExecutor();
@@ -360,11 +353,11 @@ public class PAOS {
     }
 
 
-    private StreamHttpClientConnection openHttpStream(ProtocolVersion tlsVersion)
+    private StreamHttpClientConnection openHttpStream()
 	    throws IOException, URISyntaxException {
 	StreamHttpClientConnection conn;
 	if (tlsHandler.usesTls()) {
-	    TlsClientProtocol handler = tlsHandler.createTlsConnection(tlsVersion);
+	    TlsClientProtocol handler = tlsHandler.createTlsConnection();
 	    conn = new StreamHttpClientConnection(handler.getInputStream(), handler.getOutputStream());
 	    saveServiceCertificate();
 	} else {

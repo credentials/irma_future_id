@@ -7,7 +7,7 @@
     <parent>
 	<groupId>org.openecard</groupId>
 	<artifactId>app</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0-pre1</version>
     </parent>
 
     <groupId>org.openecard</groupId>
@@ -16,10 +16,13 @@
     <name>Integrated Add-ons</name>
 
     <modules>
+	<module>pin-management</module>
 	<module>genericcryptography</module>
 	<module>tr03112</module>
 	<module>status</module>
 	<module>pkcs11</module>
+	<module>irma-log</module>
+	<module>irma-pin</module>
     </modules>
 
     <dependencies>

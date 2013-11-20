@@ -237,7 +237,7 @@ public class CardStateMap {
 	}
 
 	if (filterAppId && cardApplication != null) {
-	    //filterCardApplication(mergedSets, cardApplication);
+	    filterCardApplication(mergedSets, cardApplication);
 	} else {
 	    // [TR-03112-4] If no card application is specified, paths to all
 	    // available cards (alpha-card applications) and unused card

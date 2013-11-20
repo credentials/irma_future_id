@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AddonSpecification>
+    <ID>IRMA-LOG-Plugin</ID>
+    <Version>1.0.0</Version>
+    <License/>
+    <LocalizedName xml:lang="EN">IRMA Log</LocalizedName>
+    <LocalizedDescription xml:lang="EN">IRMA logging system</LocalizedDescription>
+    <About xml:lang="EN">IRMA logging system</About>
+    <ConfigDescription/>
+    <BindingActions/>
+    <IFDActions/>
+    <SALActions>
+	<ProtocolPluginSpecification>
+	    <URI>urn:oid:23.0.0.0.0.0.2</URI>
+	    <ClassName>org.openecard.sal.protocol.irmalog.IRMALOGProtocol</ClassName>
+	    <LocalizedName xml:lang="EN">IRMA LOG Protocol Implementation</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">TODO</LocalizedDescription>
+	    <ConfigDescription/>
+	</ProtocolPluginSpecification>
+    </SALActions>
+</AddonSpecification>

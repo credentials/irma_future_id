@@ -37,7 +37,6 @@ import org.openecard.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.openecard.apache.http.protocol.BasicHttpContext;
 import org.openecard.apache.http.protocol.HttpContext;
 import org.openecard.apache.http.protocol.HttpRequestExecutor;
-import org.openecard.bouncycastle.crypto.tls.ProtocolVersion;
 import org.openecard.bouncycastle.crypto.tls.TlsClientProtocol;
 import org.openecard.common.WSHelper;
 import org.openecard.common.interfaces.Dispatcher;
@@ -70,7 +69,11 @@ public class HttpGetTask implements Callable<StartPAOSResponse> {
 
     @Override
     public StartPAOSResponse call() throws Exception {
-	getRequest();
+	try {
+	    getRequest();
+	} finally {
+	    TCTokenHandler.disconnectHandle(dispatcher, connectionHandle);
+	}
 
 	// produce a positive result
 	StartPAOSResponse response = WSHelper.makeResponse(StartPAOSResponse.class, WSHelper.makeResultOK());
@@ -82,13 +85,7 @@ public class HttpGetTask implements Callable<StartPAOSResponse> {
 	tlsHandler.setUpClient();
 
 	// connect the tls endpoint and make a get request
-	TlsClientProtocol handler;
-	try {
-	    handler = tlsHandler.createTlsConnection(ProtocolVersion.TLSv11);
-	} catch (IOException ex) {
-	    logger.error("Connecting to the TLS endpoint with TLSv1.1 failed. Falling back to TLSv1.0.", ex);
-	    handler = tlsHandler.createTlsConnection(ProtocolVersion.TLSv10);
-	}
+	TlsClientProtocol handler = tlsHandler.createTlsConnection();
 
 	// set up connection to endpoint
 	InputStream in = handler.getInputStream();

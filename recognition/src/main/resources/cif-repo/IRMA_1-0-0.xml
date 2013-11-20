@@ -366,17 +366,17 @@
 			<!-- IRMA: Differential Identities -->
 			<!-- ============================= -->
 
-			<!--PIN.ATTRIBUTE (KeyRef = 0x00) -->
+			<!-- PIN.ATTRIBUTE (KeyRef = 0x00) -->
 
 			<iso:DIDInfo>
 				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
 				<iso:DifferentialIdentity>
 					<iso:DIDName>PIN.ATTRIBUTE</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.9</iso:DIDProtocol>
+					<iso:DIDProtocol>urn:oid:23.0.0.0.0.0.1</iso:DIDProtocol>
 					<!--PIN Compare-->
 					<iso:DIDMarker>
 						<iso:PinCompareMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.9">
+							Protocol="urn:oid:23.0.0.0.0.0.1">
 							<iso:PinRef>
 								<iso:KeyRef>00</iso:KeyRef>
 							</iso:PinRef>
@@ -426,17 +426,17 @@
 				</iso:DIDACL>
 			</iso:DIDInfo>
 
-			<!--PIN.ADMIN (KeyRef = 0x01) -->
+			<!-- PIN.ADMIN (KeyRef = 0x01) -->
 
 			<iso:DIDInfo>
 				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
 				<iso:DifferentialIdentity>
 					<iso:DIDName>PIN.ADMIN</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.9</iso:DIDProtocol>
+					<iso:DIDProtocol>urn:oid:23.0.0.0.0.0.1</iso:DIDProtocol>
 					<!--PIN Compare-->
 					<iso:DIDMarker>
 						<iso:PinCompareMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.9">
+							Protocol="urn:oid:23.0.0.0.0.0.1">
 							<iso:PinRef>
 								<iso:KeyRef>01</iso:KeyRef>
 							</iso:PinRef>
@@ -486,121 +486,31 @@
 				</iso:DIDACL>
 			</iso:DIDInfo>
 
+			<!--IRMA LOG -->
 
-			<!--PrK.eGK.AUT with rsaRoleAuthentication (corresponding to SE#01) -->
 			<iso:DIDInfo>
 				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
 				<iso:DifferentialIdentity>
-					<iso:DIDName>PrK.eGK.AUT_rsaRoleAuthentication</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.15</iso:DIDProtocol>
+					<iso:DIDName>IRMA.LOG</iso:DIDName>
+					<iso:DIDProtocol>urn:oid:23.0.0.0.0.0.0.0.2</iso:DIDProtocol>
 					<iso:DIDMarker>
-						<iso:RSAAuthMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.15">
-							<iso:CardAlgId>00</iso:CardAlgId> <!-- See [eGK-1#17.1]. -->
-							<iso:NonceSize>8</iso:NonceSize>
-							<iso:KeyRef> <!-- See [eGK-2#6.2.9]. -->
-								<iso:KeyRef>10</iso:KeyRef>
-							</iso:KeyRef>
-							<iso:CertificateRef>
-								<iso:DataSetName>EF.C.CA_eGK.CS</iso:DataSetName>
-							</iso:CertificateRef>
-							<iso:CertificateRef>
-								<iso:DataSetName>EF.C.eGK.AUT_CVC</iso:DataSetName>
-							</iso:CertificateRef>
-							<iso:ICCSNRef>
-								<iso:DataSetName>EF.GDO</iso:DataSetName>
-							</iso:ICCSNRef>
-						</iso:RSAAuthMarker>
+						<iso:PinCompareMarker
+							Protocol="urn:oid:23.0.0.0.0.0.0.0.2">
+							<iso:PinRef>
+								<iso:KeyRef>00</iso:KeyRef>
+							</iso:PinRef>
+							<iso:PasswordAttributes>
+								<iso:pwdFlags>needs-padding</iso:pwdFlags>
+								<iso:pwdType>ascii-numeric</iso:pwdType>
+								<iso:minLength>4</iso:minLength> 
+								<iso:storedLength>8</iso:storedLength>
+								<iso:maxLength>8</iso:maxLength>
+								<iso:padChar>00</iso:padChar>
+							</iso:PasswordAttributes>
+						</iso:PinCompareMarker>
 					</iso:DIDMarker>
 					<iso:DIDScope>global</iso:DIDScope>
-				</iso:DifferentialIdentity>
-				<iso:DIDACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:DifferentialIdentityServiceAction>DIDGet</iso:DifferentialIdentityServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DIDACL>
-			</iso:DIDInfo>
 
-			<!--PrK.eGK.AUT with rsaSessionkey4SM (corresponding to SE#02) -->
-			<iso:DIDInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DifferentialIdentity>
-					<iso:DIDName>PrK.eGK.AUT_rsaSessionkey4SM</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.15</iso:DIDProtocol>
-					<iso:DIDMarker>
-						<iso:RSAAuthMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.15">
-							<iso:CardAlgId>54</iso:CardAlgId> <!-- See [eGK-1#17.1]. -->
-							<iso:NonceSize>8</iso:NonceSize>
-							<iso:KeyRef> <!-- See [eGK-2#6.2.9]. -->
-								<iso:KeyRef>10</iso:KeyRef>
-							</iso:KeyRef>
-							<iso:CertificateRef>
-								<iso:DataSetName>EF.C.CA_eGK.CS</iso:DataSetName>
-							</iso:CertificateRef>
-							<iso:CertificateRef>
-								<iso:DataSetName>EF.C.eGK.AUT_CVC</iso:DataSetName>
-							</iso:CertificateRef>
-							<iso:ICCSNRef>
-								<iso:DataSetName>EF.GDO</iso:DataSetName>
-							</iso:ICCSNRef>
-						</iso:RSAAuthMarker>
-					</iso:DIDMarker>
-					<iso:DIDScope>global</iso:DIDScope>
-				</iso:DifferentialIdentity>
-				<iso:DIDACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:DifferentialIdentityServiceAction>DIDGet</iso:DifferentialIdentityServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DIDACL>
-			</iso:DIDInfo>
-
-			<!--SK.CMS-->
-			<iso:DIDInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DifferentialIdentity>
-					<iso:DIDName>SK.CMS</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.12</iso:DIDProtocol>
-					<iso:DIDMarker>
-						<iso:MutualAuthMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.12">
-							<iso:KeyEncMacRef>13</iso:KeyEncMacRef>
-							<iso:ICCSNRef>
-								<iso:DataSetName>EF.GDO</iso:DataSetName>
-							</iso:ICCSNRef>
-						</iso:MutualAuthMarker>
-					</iso:DIDMarker>
-					<iso:DIDScope>global</iso:DIDScope>
 				</iso:DifferentialIdentity>
 				<iso:DIDACL>
 					<iso:AccessRule>
@@ -614,162 +524,13 @@
 					</iso:AccessRule>
 				</iso:DIDACL>
 			</iso:DIDInfo>
-
-
-			<!--SK.VSD-->
-			<iso:DIDInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DifferentialIdentity>
-					<iso:DIDName>SK.VSD</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.12</iso:DIDProtocol>
-					<iso:DIDMarker>
-						<iso:MutualAuthMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.12">
-							<iso:KeyEncMacRef>18</iso:KeyEncMacRef>
-							<iso:ICCSNRef>
-								<iso:DataSetName>EF.GDO</iso:DataSetName>
-							</iso:ICCSNRef>
-						</iso:MutualAuthMarker>
-					</iso:DIDMarker>
-					<iso:DIDScope>global</iso:DIDScope>
-				</iso:DifferentialIdentity>
-				<iso:DIDACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DIDACL>
-			</iso:DIDInfo>
-
-
-			<!--SK.VSDCMS-->
-			<iso:DIDInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DifferentialIdentity>
-					<iso:DIDName>SK.VSDCMS</iso:DIDName>
-					<iso:DIDProtocol>urn:oid:1.3.162.15480.3.0.12</iso:DIDProtocol>
-					<iso:DIDMarker>
-						<iso:MutualAuthMarker
-							Protocol="urn:oid:1.3.162.15480.3.0.12">
-							<iso:KeyEncMacRef>20</iso:KeyEncMacRef>
-							<iso:ICCSNRef>
-								<iso:DataSetName>EF.GDO</iso:DataSetName>
-							</iso:ICCSNRef>
-						</iso:MutualAuthMarker>
-					</iso:DIDMarker>
-					<iso:DIDScope>global</iso:DIDScope>
-				</iso:DifferentialIdentity>
-				<iso:DIDACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DIDACL>
-			</iso:DIDInfo>
-
 
 			<!-- ================ -->
 			<!-- IRMA: Data Sets  -->
 			<!-- ================ -->
 
-			<!-- EF.ATR (cf. [eGK-2#6.2.1]) -->
-			<iso:DataSetInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DataSetName>EF.ATR</iso:DataSetName>
-				<iso:DataSetACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DataSetSelect</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIRead</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DataSetACL>
-				<iso:DataSetPath>
-					<iso:efIdOrPath>2F01</iso:efIdOrPath>
-				</iso:DataSetPath>
-			</iso:DataSetInfo>
+			<!-- EF.DIR -->
 
-			<!-- EF.C.CA_eGK.CS (cf. [eGK-2#6.2.2]) -->
-			<iso:DataSetInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DataSetName>EF.C.CA_eGK.CS</iso:DataSetName>
-				<iso:DataSetACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DataSetSelect</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIRead</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DataSetACL>
-				<iso:DataSetPath>
-					<iso:efIdOrPath>2F04</iso:efIdOrPath>
-				</iso:DataSetPath>
-			</iso:DataSetInfo>
-
-			<!-- EF.C.eGK.AUT_CVC (cf. [eGK-2#6.2.3]) -->
-			<iso:DataSetInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DataSetName>EF.C.eGK.AUT_CVC</iso:DataSetName>
-				<iso:DataSetACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DataSetSelect</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIRead</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DataSetACL>
-				<iso:DataSetPath>
-					<iso:efIdOrPath>2F03</iso:efIdOrPath>
-				</iso:DataSetPath>
-			</iso:DataSetInfo>
-
-			<!-- EF.DIR (cf. [eGK-2#6.2.4]) -->
 			<iso:DataSetInfo>
 				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
 				<iso:DataSetName>EF.DIR</iso:DataSetName>
@@ -804,95 +565,6 @@
 				</iso:DataSetACL>
 				<iso:DataSetPath>
 					<iso:efIdOrPath>2F00</iso:efIdOrPath>
-				</iso:DataSetPath>
-			</iso:DataSetInfo>
-
-			<!-- EF.GDO (cf. [eGK-2#6.2.5]) -->
-			<iso:DataSetInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DataSetName>EF.GDO</iso:DataSetName>
-				<iso:DataSetACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DataSetSelect</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIRead</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DataSetACL>
-				<iso:DataSetPath>
-					<iso:efIdOrPath>2F02</iso:efIdOrPath>
-				</iso:DataSetPath>
-			</iso:DataSetInfo>
-
-			<!-- EF.Version (cf. [eGK-2#6.2.6]) -->
-			<iso:DataSetInfo>
-				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
-				<iso:DataSetName>EF.Version</iso:DataSetName>
-				<iso:DataSetACL>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DataSetSelect</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIList</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIRead</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:always>true</iso:always>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-					<iso:AccessRule>
-						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
-						<iso:Action>
-							<iso:NamedDataServiceAction>DSIWrite</iso:NamedDataServiceAction>
-						</iso:Action>
-						<iso:SecurityCondition>
-							<iso:or>
-								<iso:SecurityCondition>
-									<iso:DIDAuthentication>
-										<iso:DIDName>SK.CMS</iso:DIDName>
-										<iso:DIDState>true</iso:DIDState>
-									</iso:DIDAuthentication>
-								</iso:SecurityCondition>
-								<iso:SecurityCondition>
-									<iso:DIDAuthentication>
-										<iso:DIDName>SK.VSDCMS</iso:DIDName>
-										<iso:DIDState>true</iso:DIDState>
-									</iso:DIDAuthentication>
-								</iso:SecurityCondition>
-							</iso:or>
-						</iso:SecurityCondition>
-					</iso:AccessRule>
-				</iso:DataSetACL>
-				<iso:DataSetPath>
-					<iso:efIdOrPath>2F10</iso:efIdOrPath>
 				</iso:DataSetPath>
 			</iso:DataSetInfo>
 		</iso:CardApplication>

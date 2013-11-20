@@ -118,7 +118,7 @@ public class TlsConnectionHandler {
 		TlsPSKIdentity pskId = new TlsPSKIdentityImpl(sessionId.getBytes(), psk);
 		tlsClient = new ClientCertPSKTlsClient(pskId, noSni ? null : serverHost);
 		tlsClient.setAuthentication(tlsAuth);
-		tlsClient.setClientVersion(ProtocolVersion.TLSv11);
+		tlsClient.setClientVersion(ProtocolVersion.TLSv12);
 	    } else if (secProto.equals("urn:ietf:rfc:4346")) {
 		DynamicAuthentication tlsAuth = new DynamicAuthentication();
 		tlsAuth.setHostname(serverHost);
@@ -166,6 +166,9 @@ public class TlsConnectionHandler {
 	return tlsClient;
     }
 
+    public TlsClientProtocol createTlsConnection() throws IOException, URISyntaxException {
+	return createTlsConnection(tlsClient.getClientVersion());
+    }
     public TlsClientProtocol createTlsConnection(ProtocolVersion tlsVersion)
 	    throws IOException, URISyntaxException {
 	Socket socket = ProxySettings.getDefault().getSocket(hostname, port);

@@ -76,16 +76,18 @@ public class ECardConstants {
 
     public static class Protocol {
 
-	public static final String PIN_COMPARE    = "urn:oid:1.3.162.15480.3.0.9";
-	public static final String MUTUAL_AUTH    = "urn:oid:1.3.162.15480.3.0.12";
-	public static final String EAC_GENERIC    = "urn:oid:1.3.162.15480.3.0.14";
-	public static final String EAC2           = "urn:oid:1.3.162.15480.3.0.14.2";
-	public static final String RSA_AUTH       = "urn:oid:1.3.162.15480.3.0.15";
-	public static final String GENERIC_CRYPTO = "urn:oid:1.3.162.15480.3.0.25";
-	public static final String TERMINAL_AUTH  = "urn:oid:0.4.0.127.0.7.2.2.2";
-	public static final String CHIP_AUTH      = "urn:oid:0.4.0.127.0.7.2.2.3";
-	public static final String PACE           = "urn:oid:0.4.0.127.0.7.2.2.4";
-	public static final String RESTRICTED_ID  = "urn:oid:0.4.0.127.0.7.2.2.5";
+	public static final String PIN_COMPARE    	= "urn:oid:1.3.162.15480.3.0.9";
+	public static final String IRMA_PIN_COMPARE     = "urn:oid:23.0.0.0.0.0.1";
+	public static final String IRMA_LOG     	= "urn:oid:23.0.0.0.0.0.2";
+	public static final String MUTUAL_AUTH    	= "urn:oid:1.3.162.15480.3.0.12";
+	public static final String EAC_GENERIC    	= "urn:oid:1.3.162.15480.3.0.14";
+	public static final String EAC2           	= "urn:oid:1.3.162.15480.3.0.14.2";
+	public static final String RSA_AUTH       	= "urn:oid:1.3.162.15480.3.0.15";
+	public static final String GENERIC_CRYPTO 	= "urn:oid:1.3.162.15480.3.0.25";
+	public static final String TERMINAL_AUTH  	= "urn:oid:0.4.0.127.0.7.2.2.2";
+	public static final String CHIP_AUTH      	= "urn:oid:0.4.0.127.0.7.2.2.3";
+	public static final String PACE           	= "urn:oid:0.4.0.127.0.7.2.2.4";
+	public static final String RESTRICTED_ID  	= "urn:oid:0.4.0.127.0.7.2.2.5";
 
     };
 

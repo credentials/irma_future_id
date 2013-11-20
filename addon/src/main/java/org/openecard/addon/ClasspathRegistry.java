@@ -59,7 +59,9 @@ public class ClasspathRegistry implements AddonRegistry {
     public ClasspathRegistry() throws WSMarshallerException {
 	WSMarshaller marshaller = WSMarshallerFactory.createInstance();
 	marshaller.addXmlTypeClass(AddonSpecification.class);
-
+	
+	loadManifest(marshaller, "IRMA Pin", "IRMApin-Plugin-Manifest.xml");
+	loadManifest(marshaller, "IRMA Log", "IRMAlog-Plugin-Manifest.xml");
 	loadManifest(marshaller, "TR-03112", "TCToken-Manifest.xml");
 	loadManifest(marshaller, "PIN-Management", "PIN-Plugin-Manifest.xml");
 	loadManifest(marshaller, "GenericCrypto", "GenericCrypto-Plugin-Manifest.xml");

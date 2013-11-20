@@ -19,5 +19,13 @@
     </BindingActions>
     <ApplicationActions/>
     <IFDActions/>
-    <SALActions/>
+    <SALActions>
+	<ProtocolPluginSpecification>
+	    <URI>urn:oid:1.3.162.15480.3.0.9</URI>
+	    <ClassName>org.openecard.sal.protocol.pincompare.PINCompareProtocol</ClassName>
+	    <LocalizedName xml:lang="EN">PIN Compare Protocol Implementation</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">TODO</LocalizedDescription>
+	    <ConfigDescription/>
+	</ProtocolPluginSpecification>
+    </SALActions>
 </AddonSpecification>

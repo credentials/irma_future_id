@@ -11,6 +11,23 @@ The artifacts of the project consist of modularized, and to some extent
 extensible, libraries as well as client implementations such as a Desktop
 application (richclient), an Android app and a Java Applet.
 
+IRMA integration
+================
+
+This client also contains different add-ons for supporting the capabilities of the
+IRMA card, together with a card info file for performing it detection.
+
+<table>
+  <tr>
+    <th>Name</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>irma-pin</td><td>It supports the authentication/updating process of the admin and credential pins.</td>
+  </tr>
+  <tr>
+    <td>irma-log</td><td>The card log can be read trough this add-on.</td>
+  </tr>
+</table>
 
 Build Instructions
 ==================
@@ -22,20 +39,26 @@ Quick Start
 -----------
 
 The simplified build instructions are as follows:
+```
+$ cd open-ecard
+$ git submodule update --init
+```
 
-    $ git clone git://github.com/ecsec/open-ecard.git
-    $ cd open-ecard
-    $ git submodule update --init
+The irma-log add-on requires two external libraries, SCUBA and irma-terminal, that are available from
+<a href=https://github.com/credentials/>here</a>. In order to generate jar files for them, follow the
+instructions at http://credentials.github.io/. Then, create a lib/ directory at addons/irma-log and copy there
+the two jar files. Then, install the libraries with maven from the irma-log directory:
+
+```
+mvn install:install-file -Dfile=idemix_terminal.dev.jar -DgroupId=org.irmacard.idemix -DartifactId=idemix-terminal -Dversion=1.0 -Dpackaging=org.irmacard.idemix
+mvn install:install-file -Dfile=scuba.dev.jar -DgroupId=net.sourceforge.scuba -DartifactId=scuba -Dversion=1.0 -Dpackaging=net.sourceforge.scuba
+```
+
+Finally:
+
+```
     $ mvn clean install
-
-
-In case you received a preassembled source bundle, the build instructions are
-as follows:
-
-    $ tar xaf open-ecard-${version}.tar.xz
-    $ cd open-ecard-$version
-    $ mvn clean install
-
+```
 
 License
 =======
