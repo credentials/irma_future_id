@@ -1,0 +1,10 @@
+jars
+zips
+dist
+docs
+verify
+.checkstyle
+.settings
+classes
+build
+*.swp

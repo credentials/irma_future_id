@@ -1,3 +1,0 @@
-[submodule "crypto/bouncycastle/src/bc"]
-	path = crypto/bouncycastle/src/bc
-	url = git://github.com/ecsec/bouncycastle-tls-updates.git
