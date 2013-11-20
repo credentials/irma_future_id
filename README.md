@@ -15,14 +15,14 @@ IRMA integration
 ================
 
 This client also contains different add-ons for supporting the capabilities of the
-IRMA card, together with a card info file for performing it detection.
+IRMA card, together with a card info file for performing its detection.
 
 <table>
   <tr>
     <th>Name</th><th>Description</th>
   </tr>
   <tr>
-    <td>irma-pin</td><td>It supports the authentication/updating process of the admin and credential pins.</td>
+    <td>irma-pin</td><td>It supports the authentication/updating processes of the admin and credential pins.</td>
   </tr>
   <tr>
     <td>irma-log</td><td>The card log can be read trough this add-on.</td>
