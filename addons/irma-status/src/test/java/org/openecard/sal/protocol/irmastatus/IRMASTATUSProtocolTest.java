@@ -142,7 +142,50 @@ public class IRMASTATUSProtocolTest {
      * @throws ParserConfigurationException
      */
     @Test(priority = 1)
-    public void testDidAuthenticate3() throws ParserConfigurationException {
+    public void testDidAuthenticate1() throws ParserConfigurationException {
+	System.out.println("didAuthenticate, PIN ATTRIBUTE, STATUS");
+
+	// get path to IRMA
+	CardApplicationPath cardApplicationPath = new CardApplicationPath();
+	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
+	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
+	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
+	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
+
+	// connect to IRMA
+	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
+	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
+		.get(0));
+	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
+
+	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
+
+	DIDAuthenticate parameters = new DIDAuthenticate();
+	parameters.setDIDName("IRMA.STATUS.ATTRIBUTE");
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	factory.setNamespaceAware(true);
+	DocumentBuilder builder = factory.newDocumentBuilder();
+	Document d = builder.newDocument();
+	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
+	elemPin.setTextContent("000000");
+	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
+	didAuthenticationData.getAny().add(elemPin);
+
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	parameters.setConnectionHandle(result.getConnectionHandle());
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.IRMA_STATUS);
+	parameters.setAuthenticationProtocolData(didAuthenticationData);
+	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
+
+	//assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_STATUS);
+	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+	
+        System.out.println(result1.getAuthenticationProtocolData().getAny().get(0).getTextContent());
+
+    }
+
+    @Test(priority = 2)
+    public void testDidAuthenticate2() throws ParserConfigurationException {
 	System.out.println("didAuthenticate, PIN ADMIN, STATUS");
 
 	// get path to IRMA
@@ -161,7 +204,7 @@ public class IRMASTATUSProtocolTest {
 	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
 
 	DIDAuthenticate parameters = new DIDAuthenticate();
-	parameters.setDIDName("IRMA.STATUS");
+	parameters.setDIDName("IRMA.STATUS.ADMIN");
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	factory.setNamespaceAware(true);
 	DocumentBuilder builder = factory.newDocumentBuilder();
