@@ -181,11 +181,15 @@ public class IRMALOGProtocolTest {
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
 	
 	System.out.println("## RAW IRMA LOW");
-	
+		
 	for (Element element : result1.getAuthenticationProtocolData().getAny()) {
-	        byte[] logByte = new BigInteger(element.getTextContent(),16).toByteArray();
+	    try {
+                byte[] logByte = new BigInteger(element.getTextContent(),16).toByteArray();
 	        IdemixLogEntry logEntry  = new IdemixLogEntry(logByte);
-	        logEntry.print();
-        }
+	                logEntry.print();
+        
+            } catch (Exception e) {
+            }
+	}
     }
 }

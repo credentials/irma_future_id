@@ -41,7 +41,8 @@ Quick Start
 The simplified build instructions are as follows:
 ```
 $ cd open-ecard
-$ git submodule update --init
+$ git submodule init
+$ git submodule update
 ```
 
 The irma-log add-on requires two external libraries, SCUBA and irma-terminal, that are available from
@@ -50,8 +51,8 @@ instructions at http://credentials.github.io/. Then, create a lib/ directory at 
 the two jar files. Then, install the libraries with maven from the irma-log directory:
 
 ```
-mvn install:install-file -Dfile=idemix_terminal.dev.jar -DgroupId=org.irmacard.idemix -DartifactId=idemix-terminal -Dversion=1.0 -Dpackaging=org.irmacard.idemix
-mvn install:install-file -Dfile=scuba.dev.jar -DgroupId=net.sourceforge.scuba -DartifactId=scuba -Dversion=1.0 -Dpackaging=net.sourceforge.scuba
+mvn install:install-file -Dfile=lib/idemix_terminal.dev.jar -DgroupId=org.irmacard.idemix -DartifactId=idemix-terminal -Dversion=1.0 -Dpackaging=org.irmacard.idemix
+mvn install:install-file -Dfile=lib/scuba.dev.jar -DgroupId=net.sourceforge.scuba -DartifactId=scuba -Dversion=1.0 -Dpackaging=net.sourceforge.scuba
 ```
 
 Finally:
