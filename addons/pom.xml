@@ -23,6 +23,7 @@
 	<module>pkcs11</module>
 	<module>irma-log</module>
 	<module>irma-pin</module>
+	<module>irma-status</module>
     </modules>
 
     <dependencies>

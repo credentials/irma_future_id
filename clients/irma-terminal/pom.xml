@@ -311,6 +311,11 @@
 	    <artifactId>irma-pin</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
+	<dependency>
+	    <groupId>org.openecard.addons</groupId>
+	    <artifactId>irma-status</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
 
 	<dependency>
 	    <groupId>ch.qos.logback</groupId>

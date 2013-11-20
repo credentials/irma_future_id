@@ -27,6 +27,9 @@ IRMA card, together with a card info file for performing it detection.
   <tr>
     <td>irma-log</td><td>The card log can be read trough this add-on.</td>
   </tr>
+  <tr>
+    <td>irma-status</td><td>This add-on provides information about the status of the card e.g. admin/pin credential pins.</td>
+  </tr>
 </table>
 
 Build Instructions
