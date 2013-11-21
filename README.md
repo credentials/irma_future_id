@@ -33,6 +33,9 @@ IRMA card, together with a card info file for performing its detection.
   <tr>
     <td>irma-credential</td><td>This add-on provides a list of the credentials available in the card.</td>
   </tr>
+  <tr>
+    <td>irma-prover</td><td>The Idemix proofs are generated through this add-on.</td>
+  </tr>
 </table>
 
 Build Instructions

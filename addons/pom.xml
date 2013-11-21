@@ -25,6 +25,7 @@
 	<module>irma-pin</module>
 	<module>irma-status</module>
 	<module>irma-credential</module>
+	<module>irma-prover</module>
     </modules>
 
     <dependencies>

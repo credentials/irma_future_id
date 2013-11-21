@@ -640,6 +640,44 @@
 				</iso:DIDACL>
 			</iso:DIDInfo>
 
+			<!--IRMA PROVER -->
+
+			<iso:DIDInfo>
+				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
+				<iso:DifferentialIdentity>
+					<iso:DIDName>IRMA.PROVER</iso:DIDName>
+					<iso:DIDProtocol>urn:oid:23.0.0.0.0.0.0.0.5</iso:DIDProtocol>
+					<iso:DIDMarker>
+						<iso:PinCompareMarker
+							Protocol="urn:oid:23.0.0.0.0.0.0.0.4">
+							<iso:PinRef>
+								<iso:KeyRef>00</iso:KeyRef>
+							</iso:PinRef>
+							<iso:PasswordAttributes>
+								<iso:pwdFlags>needs-padding</iso:pwdFlags>
+								<iso:pwdType>ascii-numeric</iso:pwdType>
+								<iso:minLength>4</iso:minLength> 
+								<iso:storedLength>8</iso:storedLength>
+								<iso:maxLength>8</iso:maxLength>
+								<iso:padChar>00</iso:padChar>
+							</iso:PasswordAttributes>
+						</iso:PinCompareMarker>
+					</iso:DIDMarker>
+					<iso:DIDScope>global</iso:DIDScope>
+
+				</iso:DifferentialIdentity>
+				<iso:DIDACL>
+					<iso:AccessRule>
+						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
+						<iso:Action>
+							<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
+						</iso:Action>
+						<iso:SecurityCondition>
+							<iso:always>true</iso:always>
+						</iso:SecurityCondition>
+					</iso:AccessRule>
+				</iso:DIDACL>
+			</iso:DIDInfo>
 
 			<!-- ================ -->
 			<!-- IRMA: Data Sets  -->

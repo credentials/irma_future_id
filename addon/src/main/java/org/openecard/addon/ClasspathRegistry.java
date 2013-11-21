@@ -64,6 +64,7 @@ public class ClasspathRegistry implements AddonRegistry {
 	loadManifest(marshaller, "IRMA Log", "IRMAlog-Plugin-Manifest.xml");
 	loadManifest(marshaller, "IRMA Status", "IRMAstatus-Plugin-Manifest.xml");
 	loadManifest(marshaller, "IRMA Credential", "IRMAcredential-Plugin-Manifest.xml");
+	loadManifest(marshaller, "IRMA Prover", "IRMAprover-Plugin-Manifest.xml");
 	loadManifest(marshaller, "TR-03112", "TCToken-Manifest.xml");
 	loadManifest(marshaller, "PIN-Management", "PIN-Plugin-Manifest.xml");
 	loadManifest(marshaller, "GenericCrypto", "GenericCrypto-Plugin-Manifest.xml");
