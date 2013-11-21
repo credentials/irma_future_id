@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Age (junior): Over 12</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>ageLower</CredentialID>
+
+	<VerifierID>IRMATube</VerifierID>
+	<VerificationID>ageLowerOver12</VerificationID>
+
+	<Id>903</Id>
+
+	<Description>
+	  Verify whether the holder is over 12 as is needed for some movies.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="over12" mode="revealed" />
+	  <AttributeMode id="over16" mode="unrevealed" />
+	  <AttributeMode id="over18" mode="unrevealed" />
+	  <AttributeMode id="over21" mode="unrevealed" />
+	</AttributeModes>
+</VerifySpecification>

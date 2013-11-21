@@ -1,0 +1,5 @@
+% This is a description about the credentials Surfnet can issue.
+
+% ISSUE
+ * userID: institution specific user identifier @ institution (e.g., u123456@ru.nl)
+ * securityHash: Hash(userID || card number)

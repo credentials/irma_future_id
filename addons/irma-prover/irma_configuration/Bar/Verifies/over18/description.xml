@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Age: 18+</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>ageLower</CredentialID>
+
+	<VerifierID>Bar</VerifierID>
+	<VerificationID>over18</VerificationID>
+
+	<Id>801</Id>
+
+	<Description>
+	  Gets the over18 attribute from the ageLower credential.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="over12" mode="unrevealed" />
+	  <AttributeMode id="over16" mode="unrevealed" />
+	  <AttributeMode id="over18" mode="revealed" />
+	  <AttributeMode id="over21" mode="unrevealed" />
+	</AttributeModes>
+</VerifySpecification>

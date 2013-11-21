@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Student Credential</Name>
+
+	<IssuerID>RU</IssuerID>
+	<CredentialID>studentCard</CredentialID>
+
+	<VerifierID>Albron</VerifierID>
+	<VerificationID>studentCardNone</VerificationID>
+
+	<Id>601</Id>
+
+	<Description>
+	  Only check if a student card credential is present.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="university" mode="unrevealed" />
+	  <AttributeMode id="studentCardNumber" mode="unrevealed" />
+	  <AttributeMode id="studentID" mode="unrevealed" />
+	  <AttributeMode id="level" mode="unrevealed" />
+	</AttributeModes>
+</VerifySpecification>

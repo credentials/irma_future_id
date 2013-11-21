@@ -20,7 +20,7 @@
  *
  ***************************************************************************/
 
-package org.openecard.sal.protocol.irmalog;
+package org.openecard.sal.protocol.irmaprover;
 
 import iso.std.iso_iec._24727.tech.schema.CardApplicationConnect;
 import iso.std.iso_iec._24727.tech.schema.CardApplicationConnectResponse;
@@ -57,7 +57,7 @@ import org.openecard.common.ClientEnv;
 import org.openecard.common.ECardConstants;
 import org.openecard.common.enums.EventType;
 import org.openecard.common.interfaces.Dispatcher;
-import org.openecard.common.sal.anytype.IRMASTATUSMarkerType;
+import org.openecard.common.sal.anytype.IRMAPROVERMarkerType;
 import org.openecard.common.sal.state.CardStateMap;
 import org.openecard.common.sal.state.SALStateCallback;
 import org.openecard.common.util.ByteUtils;
@@ -83,7 +83,7 @@ import static org.testng.Assert.*;
  *
  * @author Dirk Petrautzki <petrautzki@hs-coburg.de>
  */
-public class IRMASTATUSProtocolTest {
+public class IRMAPROVERProtocolTest {
 
     private static ClientEnv env;
     private static TinySAL instance;
@@ -143,7 +143,7 @@ public class IRMASTATUSProtocolTest {
      */
     @Test(priority = 1)
     public void testDidAuthenticate1() throws ParserConfigurationException {
-	System.out.println("didAuthenticate, PIN ATTRIBUTE, STATUS");
+	System.out.println("didAuthenticate, PIN ATTRIBUTE, PROVER");
 
 	// get path to IRMA
 	CardApplicationPath cardApplicationPath = new CardApplicationPath();
@@ -161,7 +161,7 @@ public class IRMASTATUSProtocolTest {
 	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
 
 	DIDAuthenticate parameters = new DIDAuthenticate();
-	parameters.setDIDName("IRMA.STATUS.ATTRIBUTE");
+	parameters.setDIDName("IRMA.PROVER");
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	factory.setNamespaceAware(true);
 	DocumentBuilder builder = factory.newDocumentBuilder();
@@ -173,54 +173,11 @@ public class IRMASTATUSProtocolTest {
 
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	parameters.setConnectionHandle(result.getConnectionHandle());
-	didAuthenticationData.setProtocol(ECardConstants.Protocol.IRMA_STATUS);
+	didAuthenticationData.setProtocol(ECardConstants.Protocol.IRMA_PROVER);
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
 
-	//assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_STATUS);
-	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
-	
-        System.out.println(result1.getAuthenticationProtocolData().getAny().get(0).getTextContent());
-
-    }
-
-    @Test(priority = 2)
-    public void testDidAuthenticate2() throws ParserConfigurationException {
-	System.out.println("didAuthenticate, PIN ADMIN, STATUS");
-
-	// get path to IRMA
-	CardApplicationPath cardApplicationPath = new CardApplicationPath();
-	CardApplicationPathType cardApplicationPathType = new CardApplicationPathType();
-	cardApplicationPathType.setCardApplication(appIdentifier_IRMA);
-	cardApplicationPath.setCardAppPathRequest(cardApplicationPathType);
-	CardApplicationPathResponse cardApplicationPathResponse = instance.cardApplicationPath(cardApplicationPath);
-
-	// connect to IRMA
-	CardApplicationConnect cardApplicationConnect = new CardApplicationConnect();
-	cardApplicationConnect.setCardApplicationPath(cardApplicationPathResponse.getCardAppPathResultSet().getCardApplicationPathResult()
-		.get(0));
-	CardApplicationConnectResponse result = instance.cardApplicationConnect(cardApplicationConnect);
-
-	assertEquals(ECardConstants.Major.OK, result.getResult().getResultMajor());
-
-	DIDAuthenticate parameters = new DIDAuthenticate();
-	parameters.setDIDName("IRMA.STATUS.ADMIN");
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	factory.setNamespaceAware(true);
-	DocumentBuilder builder = factory.newDocumentBuilder();
-	Document d = builder.newDocument();
-	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin.setTextContent("000000");
-	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
-	didAuthenticationData.getAny().add(elemPin);
-
-	parameters.setAuthenticationProtocolData(didAuthenticationData);
-	parameters.setConnectionHandle(result.getConnectionHandle());
-	didAuthenticationData.setProtocol(ECardConstants.Protocol.IRMA_STATUS);
-	parameters.setAuthenticationProtocolData(didAuthenticationData);
-	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
-
-	//assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_STATUS);
+	//assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_PROVER);
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
 	
         System.out.println(result1.getAuthenticationProtocolData().getAny().get(0).getTextContent());

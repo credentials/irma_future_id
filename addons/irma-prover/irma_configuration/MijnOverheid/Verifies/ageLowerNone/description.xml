@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Age Lower: No Attributes</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>ageLower</CredentialID>
+
+	<VerifierID>MijnOverheid</VerifierID>
+	<VerificationID>ageLowerNone</VerificationID>
+
+	<Id>603</Id>
+
+	<Description>
+	  Only verify if an age credential is present.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="over12" mode="unrevealed" />
+	  <AttributeMode id="over16" mode="unrevealed" />
+	  <AttributeMode id="over18" mode="unrevealed" />
+	  <AttributeMode id="over21" mode="unrevealed" />
+	</AttributeModes>
+</VerifySpecification>

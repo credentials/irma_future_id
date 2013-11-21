@@ -1,0 +1,8 @@
+<Issuer>
+  <ID>Stadspas</ID>
+  <Name>Stadspas</Name>
+  <ContactAddress></ContactAddress>
+  <ContactEMail>info@stadspas.nl</ContactEMail>
+
+  <baseURL>http://www.irmacard.org/credentials/phase1/Stadspas/</baseURL>
+</Issuer>

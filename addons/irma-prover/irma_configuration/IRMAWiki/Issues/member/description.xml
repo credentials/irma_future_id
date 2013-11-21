@@ -1,0 +1,22 @@
+<IssueSpecification>
+	<Name>IRMAWiki member</Name>
+	<ShortName>IRMAWiki</ShortName>
+	<IssuerID>IRMAWiki</IssuerID>
+	<CredentialID>member</CredentialID>
+	<Description>
+Your IRMAWiki membership.
+	</Description>
+
+	<Id>300</Id>
+
+	<Attributes>
+		<Attribute>
+			<Name>type</Name>
+			<Description>Your membership type</Description>
+		</Attribute>
+		<Attribute>
+			<Name>nickname</Name>
+			<Description>Your wiki nickname</Description>
+		</Attribute>
+	</Attributes>
+</IssueSpecification>

@@ -1,0 +1,31 @@
+<IssueSpecification>
+	<Name>MijnOverheid Address</Name>
+	<ShortName>Address</ShortName>
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>address</CredentialID>
+	<Description>
+Address description issued by MijnOverheid based on GBA data.
+	</Description>
+
+	<Id>11</Id>
+
+	<Attributes>
+		<Attribute>
+			<Name>country</Name>
+			<Description>The country you live in</Description>
+		</Attribute>
+		<Attribute>
+			<Name>city</Name>
+			<Description>The city you live in</Description>
+		</Attribute>
+		<Attribute>
+			<Name>street</Name>
+			<Description>Your street and house number</Description>
+		</Attribute>
+		<Attribute>
+			<Name>zipcode</Name>
+			<Description>Your zipcode</Description>
+		</Attribute>
+
+	</Attributes>
+</IssueSpecification>

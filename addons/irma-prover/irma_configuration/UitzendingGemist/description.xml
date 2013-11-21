@@ -1,0 +1,10 @@
+<Issuer>
+  <ID>UitzendingGemist</ID>
+  <Name>UitzendingGemist.nl</Name>
+  <ContactAddress>NPO
+Sumatralaan 45
+1217GP Hilversum</ContactAddress>
+  <ContactEMail>info@publiekeomproep.nl</ContactEMail>
+
+  <baseURL>http://www.irmacard.org/credentials/phase1/UitzendingGemist/</baseURL>
+</Issuer>

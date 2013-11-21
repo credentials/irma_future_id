@@ -1,0 +1,10 @@
+<Issuer>
+  <ID>IRMATube</ID>
+  <Name>IRMATube</Name>
+  <ContactAddress>Radboud Universiteit Nijmegen
+Comeniuslaan 4
+6525 HP Nijmegen</ContactAddress>
+  <ContactEMail>info@irmatube.nl</ContactEMail>
+
+  <baseURL>http://www.irmacard.org/credentials/phase1/IRMATube/</baseURL>
+</Issuer>

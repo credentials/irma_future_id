@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Age Lower: Over 16</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>ageLower</CredentialID>
+
+	<VerifierID>UitzendingGemist</VerifierID>
+	<VerificationID>ageLowerOver16</VerificationID>
+
+	<Id>800</Id>
+
+	<Description>
+	  Verify whether the holder is over 16 as is needed for some TV programs.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="over12" mode="unrevealed" />
+	  <AttributeMode id="over16" mode="revealed" />
+	  <AttributeMode id="over18" mode="unrevealed" />
+	  <AttributeMode id="over21" mode="unrevealed" />
+	</AttributeModes>
+</VerifySpecification>

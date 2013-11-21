@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Address: All Attributes</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>address</CredentialID>
+
+	<VerifierID>MijnOverheid</VerifierID>
+	<VerificationID>addressAll</VerificationID>
+
+	<Id>600</Id>
+
+	<Description>
+	  Gets the entire address credential for administrative purposes.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="country" mode="revealed" />
+	  <AttributeMode id="city" mode="revealed" />
+	  <AttributeMode id="street" mode="revealed" />
+	  <AttributeMode id="zipcode" mode="revealed" />
+	</AttributeModes>
+</VerifySpecification>
