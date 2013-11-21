@@ -177,10 +177,7 @@ public class IRMAPROVERProtocolTest {
 	parameters.setAuthenticationProtocolData(didAuthenticationData);
 	DIDAuthenticateResponse result1 = instance.didAuthenticate(parameters);
 
-	//assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_PROVER);
+	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_PROVER);
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
-	
-        System.out.println(result1.getAuthenticationProtocolData().getAny().get(0).getTextContent());
-
     }
 }

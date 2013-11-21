@@ -87,7 +87,7 @@ public class IRMAPROVERDIDAuthenticateOutputType {
 	pinCompareOutput = new iso.std.iso_iec._24727.tech.schema.PinCompareDIDAuthenticateOutputType();
 	AuthDataResponse authResponse = authMap.createResponse(pinCompareOutput);
 	
-        authResponse.addElement("pinStatus", bytesToHex(pinStatus));
+        //authResponse.addElement("pinStatus", bytesToHex(pinStatus));
 	    
 	return authResponse.getResponse();
     }

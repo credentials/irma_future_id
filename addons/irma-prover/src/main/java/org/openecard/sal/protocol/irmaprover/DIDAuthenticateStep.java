@@ -40,6 +40,11 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Vector;
+import java.util.HashMap;
+import java.io.File;
+import java.net.URI;
+import java.math.BigInteger;
+import java.net.URISyntaxException;
 import org.openecard.addon.sal.FunctionType;
 import org.openecard.addon.sal.ProtocolStep;
 import org.openecard.common.ECardException;
@@ -57,7 +62,47 @@ import org.openecard.sal.protocol.irmaprover.anytype.IRMAPROVERDIDAuthenticateOu
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import org.irmacard.idemix.util.IdemixLogEntry;
+import com.ibm.zurich.idmx.issuance.Issuer;
+import com.ibm.zurich.idmx.issuance.Message;
+import com.ibm.zurich.idmx.showproof.Proof;
+import com.ibm.zurich.idmx.showproof.Verifier;
+import com.ibm.zurich.idmx.showproof.predicates.CLPredicate;
+import com.ibm.zurich.idmx.showproof.predicates.Predicate;
+import com.ibm.zurich.idmx.showproof.predicates.Predicate.PredicateType;
+import com.ibm.zurich.idmx.utils.Constants;
+import com.ibm.zurich.idmx.utils.SystemParameters;
+
+import org.irmacard.credentials.Attributes;
+import org.irmacard.credentials.BaseCredentials;
+import org.irmacard.credentials.CredentialsException;
+import org.irmacard.credentials.Nonce;
+import org.irmacard.credentials.idemix.IdemixCredentials;
+import org.irmacard.credentials.idemix.IdemixNonce;
+import org.irmacard.credentials.idemix.IdemixPrivateKey;
+import org.irmacard.credentials.idemix.spec.IdemixIssueSpecification;
+import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
+import org.irmacard.credentials.idemix.util.CredentialInformation;
+import org.irmacard.credentials.idemix.util.IssueCredentialInformation;
+import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
+import org.irmacard.idemix.util.IdemixLogEntry;
+import org.irmacard.credentials.info.CredentialDescription;
+import org.irmacard.credentials.info.DescriptionStore;
+import org.irmacard.credentials.info.InfoException;
+import org.irmacard.idemix.IdemixService;
+import org.irmacard.idemix.IdemixSmartcard;
+
+import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
+import javax.smartcardio.TerminalFactory;
+
+import net.sourceforge.scuba.smartcards.TerminalCardService;
+import net.sourceforge.scuba.smartcards.CardService;
+import net.sourceforge.scuba.smartcards.CardServiceException;  
+import net.sourceforge.scuba.smartcards.CommandAPDU;
+import net.sourceforge.scuba.smartcards.ProtocolCommand;
+import net.sourceforge.scuba.smartcards.ProtocolCommands;
+import net.sourceforge.scuba.smartcards.ProtocolResponses;
+import net.sourceforge.scuba.smartcards.ResponseAPDU;
 
 /**
  * Implements the DIDAuthenticate step of the PIN Compare protocol.
@@ -91,7 +136,6 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
         Vector<byte[]> list = new Vector<byte[]>();
 
 	try {
-	    	    
 	    ConnectionHandleType connectionHandle = SALUtils.getConnectionHandle(request);
 	    String didName = SALUtils.getDIDName(request);
 	    CardStateEntry cardStateEntry = SALUtils.getCardStateEntry(internalData, connectionHandle);
@@ -112,26 +156,122 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    DIDStructureType didStructure = cardStateEntry.getDIDStructure(didName, cardApplication);
 	    IRMAPROVERMarkerType pinCompareMarker = new IRMAPROVERMarkerType(didStructure.getDIDMarker());
 	    	    
-	    byte keyRef = pinCompareMarker.getPINRef().getKeyRef()[0];
 	    byte[] slotHandle = connectionHandle.getSlotHandle();
 	    
-	    PasswordAttributesType attributes = pinCompareMarker.getPasswordAttributes();
-	    String rawPIN = pinCompareInput.getPIN();
+	    /*
+	        TODO
 	    
-	    byte[] template = new byte[] { 0x00, 0x20, 0x00};
-	    byte[] responseCode;
+	        1. ARGUMENTS FOR:
+	            1. CREDENTIAL THAT MUST BE USED AND OPTIONS
+	            2. NONCE
+                2. REPLACE CREDENTIAL_IDEMIX BY APDUs in IRMAUtil.java
+	    */
+	    
+	    // 1. Initialize credential informacion (XML)
+	    
+            URI core = new File(System
+                       .getProperty("user.dir")).toURI()
+                       .resolve("irma_configuration/");
+		
+            CredentialInformation.setCoreLocation(core);
+            DescriptionStore.setCoreLocation(core);
+            DescriptionStore.getInstance();
             
-            Transmit buildGetPinStatus = IRMAUtils.buildGetPinStatus(template, (byte) keyRef, slotHandle);                                                                                                  
-            TransmitResponse transRespGetPinStatus = (TransmitResponse) dispatcher.deliver(buildGetPinStatus);
+            // 2. Obtain credential spec
+          
+            //VerifyCredentialInformation vci = new VerifyCredentialInformation("RU", "studentCard", "RU", "studentCardAll");
+            //VerifyCredentialInformation vci = new VerifyCredentialInformation("RU",
+	    //			"studentCard", "RU", "studentCardNone");
+
+            VerifyCredentialInformation vci = new VerifyCredentialInformation(
+				"Surfnet", "root", "Surfnet", "rootAll");
+
+            IdemixVerifySpecification spec = vci.getIdemixVerifySpecification();
+
+            CardTerminal terminal = TerminalFactory.getDefault().terminals().list().get(0);            
+            IdemixService service = new IdemixService(new TerminalCardService(terminal));
+            IdemixCredentials ic = new IdemixCredentials(new TerminalCardService(terminal));
             
-            byte[] data = transRespGetPinStatus.getOutputAPDU().get(0);
-                         
-            pinCompareOutput.setPinStatus(data);
+            service.open();            
+            spec.setCardVersion(service.getCardVersion());
+
+            // 3. Get a nonce from the verifier 
+            // XXXX: Cogerlo del protocolAUTHdata
+		
+            Nonce nonce = ic.generateNonce(spec);
+
+            // 4. Generate proof
+	    
+            /* 
+            * Since the bug of 1/20 make fail the proof, maybe
+            * we can check its verification before sending it.
+            *
+            * If that fails, we generate a new one.
+            */
+	    
+	    Proof proof = null;
+	    boolean verified = false;
+	    
+	    while(verified == false || proof == null) {
+                ProtocolResponses protocolResponses = service.execute(ic.requestProofCommands(spec, nonce));
+                IdemixNonce n = (IdemixNonce)nonce;
+                proof = IdemixSmartcard.processBuildProofResponses(spec.getCardVersion(), protocolResponses,
+                    spec.getProofSpec());
+
+                if (proof == null) {
+                    System.out.println("Failed to generate proof.");
+                }
+		
+                Verifier verifier = new Verifier(spec.getProofSpec(), proof, n.getNonce());
+                verified = verifier.verify();
+            
+                if (!verified) {
+                    System.out.println("Verification failed");
+                }
+            }
+           
+           /* DEBUG, self-verification, Copyright Pim Vullers. 
+            
+            Attributes attributes = new Attributes();
+            HashMap<String, BigInteger> values = verifier.getRevealedValues();
+
+            String prefix = "";
+            
+            for (Predicate pred : spec.getProofSpec().getPredicates()) {
+                if (pred.getPredicateType() == PredicateType.CL) {
+                    prefix = ((CLPredicate) pred).getTempCredName() + Constants.DELIMITER;
+                    break;
+		}
+            }
+
+            for (String id : values.keySet()) {
+                String name = id.replace(prefix, "");
+		attributes.add(name, values.get(id).toByteArray());
+            }
+
+            if (!attributes.isValid()) {
+                System.err.println("Credential expired!");
+                throw new CredentialsException("The credential has expired.");
+            }		
+		
+            if (attributes == null) {
+                System.out.println("The proof does not verify");
+            } else {
+                System.out.println("Proof verified");
+            }
+		
+            attributes.print();
+            
+            */
+  
+            //pinCompareOutput.setPinStatus(data);
             response.setAuthenticationProtocolData(pinCompareOutput.getAuthDataType());	
 
 	} catch (ECardException e) {
 	    logger.error(e.getMessage(), e);
 	    response.setResult(e.getResult());
+        } catch (CardServiceException e) {
+            System.out.println("Verification encountered error " + e);
 	} catch (Exception e) {
 	    logger.error(e.getMessage(), e);
 	    response.setResult(WSHelper.makeResult(e));

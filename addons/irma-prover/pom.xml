@@ -26,11 +26,31 @@
 	    <artifactId>sal-common</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
-	<dependency>
-    		<groupId>net.sourceforge.scuba</groupId>
-		<artifactId>scuba</artifactId>
-		<version>1.0</version>
-    	</dependency>
+    <dependency>
+    	<groupId>net.sourceforge.scuba</groupId>
+	<artifactId>scuba</artifactId>
+	<version>1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.irmacard.idemix</groupId>
+	<artifactId>idemix-terminal</artifactId>
+	<version>1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.ibm.zurich</groupId>
+	<artifactId>ibm-idemix</artifactId>
+	<version>1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.irmacard.credentials</groupId>
+	<artifactId>credentials-api</artifactId>
+	<version>1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.irmacard.credentials.idemix</groupId>
+	<artifactId>credentials-idemix</artifactId>
+	<version>1.0</version>
+    </dependency>
     	<dependency>
 	    <groupId>org.openecard</groupId>
 	    <artifactId>common</artifactId>
