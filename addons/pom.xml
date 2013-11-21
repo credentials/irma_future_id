@@ -24,6 +24,7 @@
 	<module>irma-log</module>
 	<module>irma-pin</module>
 	<module>irma-status</module>
+	<module>irma-credential</module>
     </modules>
 
     <dependencies>

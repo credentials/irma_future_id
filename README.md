@@ -30,6 +30,9 @@ IRMA card, together with a card info file for performing its detection.
   <tr>
     <td>irma-status</td><td>This add-on provides information about the status of the card.</td>
   </tr>
+  <tr>
+    <td>irma-credential</td><td>This add-on provides a list of the credentials available in the card.</td>
+  </tr>
 </table>
 
 Build Instructions
