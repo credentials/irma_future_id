@@ -43,7 +43,6 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.io.File;
 import java.net.URI;
-import java.math.BigInteger;
 import java.net.URISyntaxException;
 import org.openecard.addon.sal.FunctionType;
 import org.openecard.addon.sal.ProtocolStep;
@@ -104,6 +103,8 @@ import net.sourceforge.scuba.smartcards.ProtocolCommands;
 import net.sourceforge.scuba.smartcards.ProtocolResponses;
 import net.sourceforge.scuba.smartcards.ResponseAPDU;
 
+import com.ibm.zurich.idmx.utils.Utils;
+
 /**
  * Implements the DIDAuthenticate step of the PIN Compare protocol.
  * See TR-03112, version 1.1.2, part 7, section 4.1.5.
@@ -155,7 +156,11 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    
 	    DIDStructureType didStructure = cardStateEntry.getDIDStructure(didName, cardApplication);
 	    IRMAPROVERMarkerType pinCompareMarker = new IRMAPROVERMarkerType(didStructure.getDIDMarker());
-	    	    
+
+	    byte keyRef = pinCompareMarker.getPINRef().getKeyRef()[0];
+	    PasswordAttributesType attributes = pinCompareMarker.getPasswordAttributes();
+	    String rawPIN = pinCompareInput.getPIN();
+	    	    	    	    	    
 	    byte[] slotHandle = connectionHandle.getSlotHandle();
 	    
 	    /*
@@ -163,8 +168,7 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    
 	        1. ARGUMENTS FOR:
 	            1. CREDENTIAL THAT MUST BE USED AND OPTIONS
-	            2. NONCE
-                2. REPLACE CREDENTIAL_IDEMIX BY APDUs in IRMAUtil.java
+                2. REPLACE CREDENTIAL_IDEMIX BY APDUs (IRMAUtil.java)
 	    */
 	    
 	    // 1. Initialize credential informacion (XML)
@@ -179,12 +183,12 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
             
             // 2. Obtain credential spec
           
-            //VerifyCredentialInformation vci = new VerifyCredentialInformation("RU", "studentCard", "RU", "studentCardAll");
+            VerifyCredentialInformation vci = new VerifyCredentialInformation("RU", "studentCard", "RU", "studentCardAll");
             //VerifyCredentialInformation vci = new VerifyCredentialInformation("RU",
 	    //			"studentCard", "RU", "studentCardNone");
 
-            VerifyCredentialInformation vci = new VerifyCredentialInformation(
-				"Surfnet", "root", "Surfnet", "rootAll");
+            //VerifyCredentialInformation vci = new VerifyCredentialInformation(
+	    //			"Surfnet", "root", "Surfnet", "rootAll");
 
             IdemixVerifySpecification spec = vci.getIdemixVerifySpecification();
 
@@ -196,10 +200,9 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
             spec.setCardVersion(service.getCardVersion());
 
             // 3. Get a nonce from the verifier 
-            // XXXX: Cogerlo del protocolAUTHdata
-		
-            Nonce nonce = ic.generateNonce(spec);
-
+            
+            Nonce nonce = new IdemixNonce(new BigInteger(rawPIN, 10)); 
+                    
             // 4. Generate proof
 	    
             /* 

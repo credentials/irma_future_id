@@ -77,7 +77,56 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import static org.testng.Assert.*;
 
-//import org.irmacard.idemix.util.IdemixLogEntry;
+import java.util.Random;
+import java.io.File;
+import java.net.URI;
+
+import com.ibm.zurich.idmx.utils.Utils;
+
+import com.ibm.zurich.idmx.issuance.Issuer;
+import com.ibm.zurich.idmx.issuance.Message;
+import com.ibm.zurich.idmx.showproof.Proof;
+import com.ibm.zurich.idmx.showproof.Verifier;
+import com.ibm.zurich.idmx.showproof.predicates.CLPredicate;
+import com.ibm.zurich.idmx.showproof.predicates.Predicate;
+import com.ibm.zurich.idmx.showproof.predicates.Predicate.PredicateType;
+import com.ibm.zurich.idmx.utils.Constants;
+import com.ibm.zurich.idmx.utils.SystemParameters;
+
+import org.irmacard.credentials.Attributes;
+import org.irmacard.credentials.BaseCredentials;
+import org.irmacard.credentials.CredentialsException;
+import org.irmacard.credentials.Nonce;
+import org.irmacard.credentials.idemix.IdemixCredentials;
+import org.irmacard.credentials.idemix.IdemixNonce;
+import org.irmacard.credentials.idemix.IdemixPrivateKey;
+import org.irmacard.credentials.idemix.spec.IdemixIssueSpecification;
+import org.irmacard.credentials.idemix.spec.IdemixVerifySpecification;
+import org.irmacard.credentials.idemix.util.CredentialInformation;
+import org.irmacard.credentials.idemix.util.IssueCredentialInformation;
+import org.irmacard.credentials.idemix.util.VerifyCredentialInformation;
+import org.irmacard.idemix.util.IdemixLogEntry;
+import org.irmacard.credentials.info.CredentialDescription;
+import org.irmacard.credentials.info.DescriptionStore;
+import org.irmacard.credentials.info.InfoException;
+import org.irmacard.idemix.IdemixService;
+import org.irmacard.idemix.IdemixSmartcard;
+
+import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
+import javax.smartcardio.TerminalFactory;
+
+import net.sourceforge.scuba.smartcards.TerminalCardService;
+import net.sourceforge.scuba.smartcards.CardService;
+import net.sourceforge.scuba.smartcards.CardServiceException;  
+import net.sourceforge.scuba.smartcards.CommandAPDU;
+import net.sourceforge.scuba.smartcards.ProtocolCommand;
+import net.sourceforge.scuba.smartcards.ProtocolCommands;
+import net.sourceforge.scuba.smartcards.ProtocolResponses;
+import net.sourceforge.scuba.smartcards.ResponseAPDU;
+
+import com.ibm.zurich.idmx.utils.Utils;
+
 
 /**
  *
@@ -142,7 +191,7 @@ public class IRMAPROVERProtocolTest {
      * @throws ParserConfigurationException
      */
     @Test(priority = 1)
-    public void testDidAuthenticate1() throws ParserConfigurationException {
+    public void testDidAuthenticate1() throws ParserConfigurationException, InfoException, CardException, CardServiceException, CredentialsException {
 	System.out.println("didAuthenticate, PIN ATTRIBUTE, PROVER");
 
 	// get path to IRMA
@@ -166,8 +215,36 @@ public class IRMAPROVERProtocolTest {
 	factory.setNamespaceAware(true);
 	DocumentBuilder builder = factory.newDocumentBuilder();
 	Document d = builder.newDocument();
+	
+	// change this in the future, is OK by now. I won't touch the schema.
+    
+	URI core = new File(System
+                       .getProperty("user.dir")).toURI()
+                       .resolve("irma_configuration/");
+		
+        CredentialInformation.setCoreLocation(core);
+        DescriptionStore.setCoreLocation(core);
+        DescriptionStore.getInstance();
+
 	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	elemPin.setTextContent("000000");
+	
+        VerifyCredentialInformation vci = new VerifyCredentialInformation(
+				"Surfnet", "root", "Surfnet", "rootAll");
+
+        IdemixVerifySpecification spec = vci.getIdemixVerifySpecification();
+        CardTerminal terminal = TerminalFactory.getDefault().terminals().list().get(0);            
+        
+        IdemixService service = new IdemixService(new TerminalCardService(terminal));
+        IdemixCredentials ic = new IdemixCredentials(new TerminalCardService(terminal));
+            
+        service.open();            
+        spec.setCardVersion(service.getCardVersion());
+
+        IdemixNonce nonce = (IdemixNonce)ic.generateNonce(spec);
+        
+        //BigInteger back = new BigInteger(nonceString, 10);	
+	
+	elemPin.setTextContent(nonce.getNonce().toString());
 	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
 	didAuthenticationData.getAny().add(elemPin);
 
