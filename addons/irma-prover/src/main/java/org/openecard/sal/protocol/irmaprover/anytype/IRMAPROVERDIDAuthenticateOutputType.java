@@ -22,6 +22,7 @@
 
 package org.openecard.sal.protocol.irmaprover.anytype;
 
+
 import iso.std.iso_iec._24727.tech.schema.DIDAuthenticationDataType;
 import java.math.BigInteger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,7 +39,7 @@ import java.util.Vector;
 public class IRMAPROVERDIDAuthenticateOutputType {
 
     private final AuthDataMap authMap;
-    byte[] pinStatus;
+    String response;
     
     /**
      * Creates a new PINCompareDIDAuthenticateOutputType.
@@ -53,8 +54,8 @@ public class IRMAPROVERDIDAuthenticateOutputType {
     /**
      * Creates a new PINCompareDIDAuthenticateOutputType.
      *
-     * @param authMap AuthDataMap
      */
+
     protected IRMAPROVERDIDAuthenticateOutputType(AuthDataMap authMap) {
 	this.authMap = authMap;
     }
@@ -64,8 +65,8 @@ public class IRMAPROVERDIDAuthenticateOutputType {
      *
      * @return Retry counter
      */
-    public byte[] getPinStatus() {
-	return pinStatus;
+    public String getResponse() {
+	return response;
     }
 
     /**
@@ -73,8 +74,8 @@ public class IRMAPROVERDIDAuthenticateOutputType {
      *
      * @param logEntry Retry counter
      */
-    public void setPinStatus(byte[] pinStatus) {
-	this.pinStatus = pinStatus;	
+    public void setResponse(String response) {
+	this.response = response;	
     }
 
     /**
@@ -87,26 +88,9 @@ public class IRMAPROVERDIDAuthenticateOutputType {
 	pinCompareOutput = new iso.std.iso_iec._24727.tech.schema.PinCompareDIDAuthenticateOutputType();
 	AuthDataResponse authResponse = authMap.createResponse(pinCompareOutput);
 	
-        //authResponse.addElement("pinStatus", bytesToHex(pinStatus));
+        authResponse.addElement("response", this.response);
 	    
 	return authResponse.getResponse();
     }
-
-    // XXXX: Replace this by Hex()
-
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        int v;
-        
-        for ( int j = 0; j < bytes.length; j++ ) {
-                    v = bytes[j] & 0xFF;
-                            hexChars[j * 2] = hexArray[v >>> 4];
-                                    hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-                                        }
-                                            return new String(hexChars);
-                                            }
-
-
 
 }

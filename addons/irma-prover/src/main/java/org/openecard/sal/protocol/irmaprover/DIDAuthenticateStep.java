@@ -105,6 +105,12 @@ import net.sourceforge.scuba.smartcards.ResponseAPDU;
 
 import com.ibm.zurich.idmx.utils.Utils;
 
+import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
+
 /**
  * Implements the DIDAuthenticate step of the PIN Compare protocol.
  * See TR-03112, version 1.1.2, part 7, section 4.1.5.
@@ -142,7 +148,7 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    CardStateEntry cardStateEntry = SALUtils.getCardStateEntry(internalData, connectionHandle);
 	    
 	    IRMAPROVERDIDAuthenticateInputType pinCompareInput = new IRMAPROVERDIDAuthenticateInputType(request.getAuthenticationProtocolData());
-	    IRMAPROVERDIDAuthenticateOutputType pinCompareOutput = pinCompareInput.getOutputType();
+	    IRMAPROVERDIDAuthenticateOutputType proofOutput = pinCompareInput.getOutputType();
 
 	    byte[] cardApplication;
 	    
@@ -163,14 +169,6 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    	    	    	    	    
 	    byte[] slotHandle = connectionHandle.getSlotHandle();
 	    
-	    /*
-	        TODO
-	    
-	        1. ARGUMENTS FOR:
-	            1. CREDENTIAL THAT MUST BE USED AND OPTIONS
-                2. REPLACE CREDENTIAL_IDEMIX BY APDUs (IRMAUtil.java)
-	    */
-	    
 	    // 1. Initialize credential informacion (XML)
 	    
             URI core = new File(System
@@ -184,11 +182,6 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
             // 2. Obtain credential spec
           
             VerifyCredentialInformation vci = new VerifyCredentialInformation("RU", "studentCard", "RU", "studentCardAll");
-            //VerifyCredentialInformation vci = new VerifyCredentialInformation("RU",
-	    //			"studentCard", "RU", "studentCardNone");
-
-            //VerifyCredentialInformation vci = new VerifyCredentialInformation(
-	    //			"Surfnet", "root", "Surfnet", "rootAll");
 
             IdemixVerifySpecification spec = vci.getIdemixVerifySpecification();
 
@@ -204,71 +197,20 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
             Nonce nonce = new IdemixNonce(new BigInteger(rawPIN, 10)); 
                     
             // 4. Generate proof
-	    
-            /* 
-            * Since the bug of 1/20 make fail the proof, maybe
-            * we can check its verification before sending it.
-            *
-            * If that fails, we generate a new one.
-            */
-	    
+	    	    
 	    Proof proof = null;
 	    boolean verified = false;
-	    
-	    while(verified == false || proof == null) {
-                ProtocolResponses protocolResponses = service.execute(ic.requestProofCommands(spec, nonce));
-                IdemixNonce n = (IdemixNonce)nonce;
-                proof = IdemixSmartcard.processBuildProofResponses(spec.getCardVersion(), protocolResponses,
-                    spec.getProofSpec());
-
-                if (proof == null) {
-                    System.out.println("Failed to generate proof.");
-                }
-		
-                Verifier verifier = new Verifier(spec.getProofSpec(), proof, n.getNonce());
-                verified = verifier.verify();
+            IdemixNonce n = (IdemixNonce)nonce;
             
-                if (!verified) {
-                    System.out.println("Verification failed");
-                }
-            }
-           
-           /* DEBUG, self-verification, Copyright Pim Vullers. 
-            
-            Attributes attributes = new Attributes();
-            HashMap<String, BigInteger> values = verifier.getRevealedValues();
+            ProtocolResponses protocolResponses = null;
+            protocolResponses = service.execute(ic.requestProofCommands(spec, nonce));
+                    
+            Gson gson = new Gson();
+            String json = gson.toJson(protocolResponses);  
+          
+            proofOutput.setResponse(json);
 
-            String prefix = "";
-            
-            for (Predicate pred : spec.getProofSpec().getPredicates()) {
-                if (pred.getPredicateType() == PredicateType.CL) {
-                    prefix = ((CLPredicate) pred).getTempCredName() + Constants.DELIMITER;
-                    break;
-		}
-            }
-
-            for (String id : values.keySet()) {
-                String name = id.replace(prefix, "");
-		attributes.add(name, values.get(id).toByteArray());
-            }
-
-            if (!attributes.isValid()) {
-                System.err.println("Credential expired!");
-                throw new CredentialsException("The credential has expired.");
-            }		
-		
-            if (attributes == null) {
-                System.out.println("The proof does not verify");
-            } else {
-                System.out.println("Proof verified");
-            }
-		
-            attributes.print();
-            
-            */
-  
-            //pinCompareOutput.setPinStatus(data);
-            response.setAuthenticationProtocolData(pinCompareOutput.getAuthDataType());	
+            response.setAuthenticationProtocolData(proofOutput.getAuthDataType());	
 
 	} catch (ECardException e) {
 	    logger.error(e.getMessage(), e);

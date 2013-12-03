@@ -78,7 +78,11 @@ import org.w3c.dom.Element;
 import static org.testng.Assert.*;
 
 import java.util.Random;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.File;
+import java.io.IOException;
+
 import java.net.URI;
 
 import com.ibm.zurich.idmx.utils.Utils;
@@ -91,6 +95,16 @@ import com.ibm.zurich.idmx.showproof.predicates.CLPredicate;
 import com.ibm.zurich.idmx.showproof.predicates.Predicate;
 import com.ibm.zurich.idmx.showproof.predicates.Predicate.PredicateType;
 import com.ibm.zurich.idmx.utils.Constants;
+import com.ibm.zurich.idmx.utils.SystemParameters;
+import com.ibm.zurich.idmx.dm.Values;
+import com.ibm.zurich.idmx.dm.structure.AttributeStructure;
+import com.ibm.zurich.idmx.dm.structure.CredentialStructure;
+import com.ibm.zurich.idmx.issuance.IssuanceSpec;
+import com.ibm.zurich.idmx.issuance.Message;
+import com.ibm.zurich.idmx.issuance.Message.IssuanceProtocolValues;
+import com.ibm.zurich.idmx.key.IssuerPublicKey;
+import com.ibm.zurich.idmx.showproof.Identifier;
+import com.ibm.zurich.idmx.utils.StructureStore;
 import com.ibm.zurich.idmx.utils.SystemParameters;
 
 import org.irmacard.credentials.Attributes;
@@ -111,6 +125,8 @@ import org.irmacard.credentials.info.DescriptionStore;
 import org.irmacard.credentials.info.InfoException;
 import org.irmacard.idemix.IdemixService;
 import org.irmacard.idemix.IdemixSmartcard;
+import org.irmacard.idemix.util.CardVersion;
+import org.irmacard.idemix.util.IdemixFlags;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
@@ -123,15 +139,20 @@ import net.sourceforge.scuba.smartcards.CommandAPDU;
 import net.sourceforge.scuba.smartcards.ProtocolCommand;
 import net.sourceforge.scuba.smartcards.ProtocolCommands;
 import net.sourceforge.scuba.smartcards.ProtocolResponses;
+import net.sourceforge.scuba.smartcards.ProtocolResponse;
 import net.sourceforge.scuba.smartcards.ResponseAPDU;
+import net.sourceforge.scuba.smartcards.ISO7816;
+import net.sourceforge.scuba.smartcards.ProtocolErrors;
 
 import com.ibm.zurich.idmx.utils.Utils;
 
+import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
 
-/**
- *
- * @author Dirk Petrautzki <petrautzki@hs-coburg.de>
- */
+import com.google.gson.Gson;
+
+
 public class IRMAPROVERProtocolTest {
 
     private static ClientEnv env;
@@ -191,7 +212,7 @@ public class IRMAPROVERProtocolTest {
      * @throws ParserConfigurationException
      */
     @Test(priority = 1)
-    public void testDidAuthenticate1() throws ParserConfigurationException, InfoException, CardException, CardServiceException, CredentialsException {
+    public void testDidAuthenticate1() throws ParserConfigurationException, InfoException, CardException, CardServiceException, CredentialsException, IOException {
 	System.out.println("didAuthenticate, PIN ATTRIBUTE, PROVER");
 
 	// get path to IRMA
@@ -216,7 +237,7 @@ public class IRMAPROVERProtocolTest {
 	DocumentBuilder builder = factory.newDocumentBuilder();
 	Document d = builder.newDocument();
 	
-	// change this in the future, is OK by now. I won't touch the schema.
+	// change this in the future
     
 	URI core = new File(System
                        .getProperty("user.dir")).toURI()
@@ -227,10 +248,9 @@ public class IRMAPROVERProtocolTest {
         DescriptionStore.getInstance();
 
 	Element elemPin = d.createElementNS("urn:iso:std:iso-iec:24727:tech:schema", "Pin");
-	
-        VerifyCredentialInformation vci = new VerifyCredentialInformation(
-				"Surfnet", "root", "Surfnet", "rootAll");
 
+        VerifyCredentialInformation vci = new VerifyCredentialInformation("RU", "studentCard", "RU", "studentCardAll");
+	
         IdemixVerifySpecification spec = vci.getIdemixVerifySpecification();
         CardTerminal terminal = TerminalFactory.getDefault().terminals().list().get(0);            
         
@@ -241,9 +261,8 @@ public class IRMAPROVERProtocolTest {
         spec.setCardVersion(service.getCardVersion());
 
         IdemixNonce nonce = (IdemixNonce)ic.generateNonce(spec);
-        
-        //BigInteger back = new BigInteger(nonceString, 10);	
-	
+        service.close();
+        	
 	elemPin.setTextContent(nonce.getNonce().toString());
 	DIDAuthenticationDataType didAuthenticationData = new DIDAuthenticationDataType();
 	didAuthenticationData.getAny().add(elemPin);
@@ -256,5 +275,14 @@ public class IRMAPROVERProtocolTest {
 
 	assertEquals(result1.getAuthenticationProtocolData().getProtocol(), ECardConstants.Protocol.IRMA_PROVER);
 	assertEquals(ECardConstants.Major.OK, result1.getResult().getResultMajor());
+
+	Gson gson = new Gson();
+	String json = result1.getAuthenticationProtocolData().getAny().get(0).getTextContent();
+	
+        ProtocolResponses responses = gson.fromJson(json, ProtocolResponses.class);   
+        Proof proof = IdemixSmartcard.processBuildProofResponses(spec.getCardVersion(), responses, spec.getProofSpec());
+
+        Verifier verifier = new Verifier(spec.getProofSpec(), proof, nonce.getNonce());
+        System.out.println("Proof verification result: " + verifier.verify());         
     }
 }
