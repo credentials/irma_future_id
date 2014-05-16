@@ -169,7 +169,7 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    	    	    	    	    
 	    byte[] slotHandle = connectionHandle.getSlotHandle();
 	    
-	    // 1. Initialize credential informacion (XML)
+	    // 1. Initialize credential information (XML)
 	    
             URI core = new File(System
                        .getProperty("user.dir")).toURI()
