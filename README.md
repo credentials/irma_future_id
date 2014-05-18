@@ -48,6 +48,17 @@ this source package.
 
 ### ABC4Trust
 
+In order to use the irma-prover add-on without having an IRMA token connected, the ABC4Trust engine must be
+running in the client-side. Moreover, an issuer is expected to issue or have issued 
+the credential that is being used during the verification. Building instructions can be found at 
+https://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/Privacy_-_Installation_and_Administration_Guide
+
+Finally, the user webservice should be running in the client-side:
+
+```
+java -jar selfcontained-user-service.war 9200
+```
+
 Quick Start
 -----------
 
