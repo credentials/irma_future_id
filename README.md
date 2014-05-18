@@ -34,7 +34,9 @@ IRMA card, together with a card info file for performing its detection.
     <td>irma-credential</td><td>This add-on provides a list of the credentials available in the card.</td>
   </tr>
   <tr>
-    <td>irma-prover</td><td>The Idemix proofs are generated through this add-on.</td> 
+    <td>irma-prover</td><td>The Idemix proofs are generated through this add-on. If an IRMA card is connected
+it is used in order to generate a proof according to a desired configuration (See https://github.com/credentials/irma_configuration).
+Otherwise, a software credential from ABC4Trust is utilized.</td> 
   </tr>
 </table>
 
@@ -43,6 +45,8 @@ Build Instructions
 
 Detailed build instructions can be found in the INSTALL.md file bundled with
 this source package.
+
+### ABC4Trust
 
 Quick Start
 -----------
