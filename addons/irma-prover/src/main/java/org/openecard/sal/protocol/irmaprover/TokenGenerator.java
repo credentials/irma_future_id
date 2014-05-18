@@ -12,9 +12,9 @@ import java.io.FileWriter;
 import java.io.StringWriter;
 import java.lang.Process;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.charset.Charset;
+//import java.nio.file.Files;
+//import java.nio.file.Paths;
+//import java.nio.charset.Charset;
 
 public class TokenGenerator {
 
@@ -57,16 +57,20 @@ public class TokenGenerator {
     }
   }
 
+  /* This function is used in the response of the DIDAuthenticate.
+  XXXX: Add support for java.nio in the client of replace by
+  java.io*/
   public String getPresentationToken(String pathToPresentationToken) {
    byte[] encoded = null;
   
-   try {
-    encoded = Files.readAllBytes(Paths.get(pathToPresentationToken));
-   } catch(Exception e) {
-     e.printStackTrace();
-   }
+  // try {
+  //  encoded = Files.readAllBytes(Paths.get(pathToPresentationToken));
+  // } catch(Exception e) {
+  //   e.printStackTrace();
+  // }
    
-   return new String(encoded,  Charset.defaultCharset());
+  // return new String(encoded,  Charset.defaultCharset());
+   return new String("");
   }
 
   public static void main( String[] args ) {
