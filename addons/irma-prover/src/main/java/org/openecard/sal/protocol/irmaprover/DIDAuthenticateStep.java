@@ -169,45 +169,16 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
 	    	    	    	    	    
 	    byte[] slotHandle = connectionHandle.getSlotHandle();
 	    
-	    // 1. Initialize credential information (XML)
+	    /* TODO: Select if an IRMA token will be used in case it is connected. Otherwise,
+	       the ABC4Trust policy and its associated software credential is selected. */
 	    
-            URI core = new File(System
-                       .getProperty("user.dir")).toURI()
-                       .resolve("irma_configuration/");
-		
-            CredentialInformation.setCoreLocation(core);
-            DescriptionStore.setCoreLocation(core);
-            DescriptionStore.getInstance();
-            
-            // 2. Obtain credential spec
+	    ProofGenerator proofGenerator = new ProofGenerator("irma_configuration/");
+            proofGenerator.configureIRMA(false, null);
           
-            VerifyCredentialInformation vci = new VerifyCredentialInformation("RU", "studentCard", "RU", "studentCardAll");
-
-            IdemixVerifySpecification spec = vci.getIdemixVerifySpecification();
-
-            CardTerminal terminal = TerminalFactory.getDefault().terminals().list().get(0);            
-            IdemixService service = new IdemixService(new TerminalCardService(terminal));
-            IdemixCredentials ic = new IdemixCredentials(new TerminalCardService(terminal));
-            
-            service.open();            
-            spec.setCardVersion(service.getCardVersion());
-
-            // 3. Get a nonce from the verifier 
-            
+            /* TODO: Parse nonce from abc4trust policy */
             Nonce nonce = new IdemixNonce(new BigInteger(rawPIN, 10)); 
-                    
-            // 4. Generate proof
-	    	    
-	    Proof proof = null;
-	    boolean verified = false;
-            IdemixNonce n = (IdemixNonce)nonce;
-            
-            ProtocolResponses protocolResponses = null;
-            protocolResponses = service.execute(ic.requestProofCommands(spec, nonce));
-                    
-            Gson gson = new Gson();
-            String json = gson.toJson(protocolResponses);  
           
+            String json = proofGenerator.generateProof(nonce);        
             proofOutput.setResponse(json);
 
             response.setAuthenticationProtocolData(proofOutput.getAuthDataType());	
