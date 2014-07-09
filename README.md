@@ -42,6 +42,7 @@ Finally, the user webservice should be running in the client-side:
 
 ```
 java -jar selfcontained-user-service.war 9200
+```
 
 This webservice can be loaded via the configuration menu of the client.
 
