@@ -60,6 +60,7 @@ public class ClasspathRegistry implements AddonRegistry {
 	WSMarshaller marshaller = WSMarshallerFactory.createInstance();
 	marshaller.addXmlTypeClass(AddonSpecification.class);
 	
+	loadManifest(marshaller, "ABC4TRUST", "ABC4TRUST-Plugin-Manifest.xml");
 	loadManifest(marshaller, "IRMA Pin", "IRMApin-Plugin-Manifest.xml");
 	loadManifest(marshaller, "IRMA Log", "IRMAlog-Plugin-Manifest.xml");
 	loadManifest(marshaller, "IRMA Status", "IRMAstatus-Plugin-Manifest.xml");

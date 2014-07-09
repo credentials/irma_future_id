@@ -26,6 +26,7 @@
 	<module>irma-status</module>
 	<module>irma-credential</module>
 	<module>irma-prover</module>
+	<module>abc4trust</module>
     </modules>
 
     <dependencies>

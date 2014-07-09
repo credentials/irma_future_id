@@ -165,6 +165,15 @@ public class DIDAuthenticateStep implements ProtocolStep<DIDAuthenticate, DIDAut
                                  byte[] log_entry = Arrays.copyOfRange(data, LOG_ENTRY_SIZE
                                                                        * entry, LOG_ENTRY_SIZE * (entry + 1));
                                                                                                              
+                                 
+                                 StringBuffer result = new StringBuffer();
+                                 for (byte b:log_entry) {
+                                     result.append(String.format("%02X", b));
+                                     }
+
+                                 System.out.println("entrada de la lista " + result);
+                                 
+                                 
                                  list.add(log_entry);
                          }                                                                                                                            
                          

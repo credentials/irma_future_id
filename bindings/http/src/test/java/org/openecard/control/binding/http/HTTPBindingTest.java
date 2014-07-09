@@ -78,7 +78,7 @@ public final class HTTPBindingTest {
      * 5. after 70 sec. a waitForChange to see if the event queue has correctly been removed due to timeout
      * 6. a waitForChange as POST request
      */
-    @Test(enabled = !true)
+    @Test
     public void testWaitForChange() {
 	try {
 	    // Request a "get status" with GET and without optional session parameter
@@ -142,7 +142,7 @@ public final class HTTPBindingTest {
      * 3. a POST request
      * 4. a GET request with optional and malformed session parameter
      */
-    @Test(enabled = !true)
+    @Test
     public void testGetStatus() {
 	try {
 	    // Request a "get status" with GET and without optional session parameter
@@ -181,7 +181,7 @@ public final class HTTPBindingTest {
 	}
     }
 
-    @Test(enabled = !true)
+    @Test
     public void testeIDClient() {
 	try {
 	    // Request a "eID-Client"

@@ -95,6 +95,17 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 public class ProofGenerator {
 
@@ -109,8 +120,7 @@ public class ProofGenerator {
   private CardTerminal terminal; 
   private IdemixService service;
   private IdemixCredentials ic;
-
-   
+ 
   public ProofGenerator(String pathToConfiguration) {
    try {
     URI core = new File(System
@@ -141,7 +151,37 @@ public class ProofGenerator {
      /* TODO */
     }
    } else {
-    /* TODO: Extract disclosure information from ABC4Trust policy */
+      try {
+       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+       InputSource is = new InputSource();
+       is.setCharacterStream(new StringReader(policy));
+
+       Document doc = db.parse(is);
+       NodeList nodes = doc.getElementsByTagName("Message");
+
+       /* Get nonce from policy
+
+        Element nonce_element = (Element) nodes.item(0);
+
+        NodeList name = nonce_element.getElementsByTagName("Nonce");
+        Element line = (Element) name.item(0);
+      
+        System.out.println("Nonce: " + getCharacterDataFromElement(line));
+       */
+       
+       nodes = doc.getElementsByTagName("DisclosedAttribute");
+
+       for (int i = 0; i < nodes.getLength(); i++) {
+        Element disclosure_element = (Element) nodes.item(i);
+        System.out.println(disclosure_element.getAttribute("AttributeType"));
+       }
+      
+       /* TODO: Translate the disclosure policy into the right configuration 
+          for IRMA */
+      
+      } catch (Exception e) {
+        /* TODO */
+      }
    }
   }
 
@@ -163,5 +203,14 @@ public class ProofGenerator {
         return gson.toJson(protocolResponses);  
    else
     return null;
+  }
+
+  public static String getCharacterDataFromElement(Element e) {
+    Node child = e.getFirstChild();
+    if (child instanceof CharacterData) {
+      CharacterData cd = (CharacterData) child;
+      return cd.getData();
+    }
+    return "";
   }
 }

@@ -82,6 +82,8 @@ public class ECardConstants {
 	public static final String IRMA_STATUS     	= "urn:oid:23.0.0.0.0.0.3";
 	public static final String IRMA_CREDENTIAL     	= "urn:oid:23.0.0.0.0.0.4";
 	public static final String IRMA_PROVER		= "urn:oid:23.0.0.0.0.0.5";
+	public static final String ABC4TRUST     	= "urn:oid:23.0.0.0.0.0.6";
+
 	public static final String MUTUAL_AUTH    	= "urn:oid:1.3.162.15480.3.0.12";
 	public static final String EAC_GENERIC    	= "urn:oid:1.3.162.15480.3.0.14";
 	public static final String EAC2           	= "urn:oid:1.3.162.15480.3.0.14.2";
