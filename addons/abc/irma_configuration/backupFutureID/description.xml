@@ -1,8 +1,0 @@
-<Issuer>
-  <ID>FutureID</ID>
-  <Name>FutureID</Name>
-  <ContactAddress>FP7 FutureID</ContactAddress>
-  <ContactEMail>futureID@futureID.eu</ContactEMail>
-
-  <baseURL>http://www.futureid.org/credentials/phase1/RU/</baseURL>
-</Issuer>
