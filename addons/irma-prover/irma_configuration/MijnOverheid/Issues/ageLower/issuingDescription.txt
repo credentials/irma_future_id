@@ -1,7 +1,0 @@
-% This is a description about the credentials MijnOverheid can issue.
-
-% ISSUE
- * over12: 
- * over16:
- * over18:
- * over21:

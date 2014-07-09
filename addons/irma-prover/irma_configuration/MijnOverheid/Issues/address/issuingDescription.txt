@@ -1,7 +1,0 @@
-% This is a description about the credentials MijnOverheid can issue.
-
-% ISSUE
- * country: 
- * city:
- * street:
- * zipcode:

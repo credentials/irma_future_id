@@ -1,9 +1,0 @@
-<Issuer>
-  <ID>Surfnet</ID>
-  <Name>Surfnet BV</Name>
-  <ContactAddress>Postbus 19035
-3501 DA Utrecht</ContactAddress>
-  <ContactEMail>admin@surfnet.nl</ContactEMail>
-
-  <baseURL>http://www.irmacard.org/credentials/phase1/Surfnet/</baseURL>
-</Issuer>
