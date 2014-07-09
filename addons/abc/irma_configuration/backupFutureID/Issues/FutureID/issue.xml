@@ -1,0 +1,31 @@
+<CredentialIssueSpecification>
+	<Name>Future ID card</Name>
+	<ShortName>FutureID</ShortName>
+	<IssuerID>FutureID</IssuerID>
+	<CredentialID>FutureID</CredentialID>
+	<Description>This is the Future ID eID used in the IRMA addon.</Description>
+	<Id>15</Id>       
+	<Expires>180</Expires> <!-- specified in days relative to date of issuance -->	
+	<Attributes>
+		<Attribute type="string">
+			<Name>nameSurname</Name>
+			<Description>The name and surname of the cardholder</Description>
+			<Value>Future ID User</Value>
+		</Attribute>
+		<Attribute type="string">
+			<Name>eIdentifier</Name>
+			<Description>The unique number of the eID</Description>
+			<Value>243538995235134400C</Value>
+		</Attribute >
+		<Attribute type="string">
+			<Name>address</Name>
+			<Description>The address of the cardholder</Description>
+			<Value>9800 Savage Road, Fort Meade, MD ‎(301)</Value>
+		</Attribute>
+		<Attribute type="string">
+			<Name>age</Name>
+			<Description>The age of the cardholder</Description>
+			<Value>23</Value>
+		</Attribute>
+	</Attributes>
+</CredentialIssueSpecification>

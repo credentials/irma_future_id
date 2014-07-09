@@ -1,0 +1,20 @@
+<VerifySpecification>
+	<Name>Surfnet Root: No Attributes</Name>
+
+	<IssuerID>Surfnet</IssuerID>
+	<CredentialID>root</CredentialID>
+
+	<VerifierID>IRMAWiki</VerifierID>
+	<VerificationID>surfnetRootNone</VerificationID>
+
+	<Id>1001</Id>
+
+	<Description>
+	  Only verify if a surfnet root credential is present.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="userID" mode="unrevealed" />
+	  <AttributeMode id="securityHash" mode="unrevealed" />
+	</AttributeModes>
+</VerifySpecification>

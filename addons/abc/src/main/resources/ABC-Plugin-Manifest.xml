@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AddonSpecification>
+    <ID>ABC-Plugin</ID>
+    <Version>1.0.0</Version>
+    <License/>
+    <LocalizedName xml:lang="EN">IRMA Management</LocalizedName>
+    <LocalizedName xml:lang="DE">ABC Verwaltung</LocalizedName>
+    <LocalizedDescription xml:lang="EN">Management of ABC tokens</LocalizedDescription>
+    <LocalizedDescription xml:lang="DE">Verwaltung von PIN/ PUK und gegebenenfalls anderen Geheimnissen der Chipkarte.</LocalizedDescription>
+    <About xml:lang="EN">ABC management functionality belonging to the Open eCard core.</About>
+    <Logo>images/abc.png</Logo>
+    <ConfigDescription/>
+    <BindingActions/>
+    <ApplicationActions>
+	<AppExtensionSpecification>
+	    <ID>ChangePINActionAdmin</ID>
+	    <ClassName>org.openecard.plugins.abcplugin.ChangePINAction</ClassName>
+	    <LocalizedName xml:lang="EN">Change admin PIN</LocalizedName>
+	    <LocalizedName xml:lang="DE">PIN ändern</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">With this action you can change your admin PIN.</LocalizedDescription>
+	    <LocalizedDescription xml:lang="DE">Mit dieser Aktion können Sie ihre PIN ändern.</LocalizedDescription>
+	    <ConfigDescription/>
+	</AppExtensionSpecification>
+	<AppExtensionSpecification>
+	    <ID>ChangePINActionCred</ID>
+	    <ClassName>org.openecard.plugins.abcplugin.ChangePINActionCred</ClassName>
+	    <LocalizedName xml:lang="EN">Change cred PIN</LocalizedName>
+	    <LocalizedName xml:lang="DE">PIN ändern</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">With this action you can change your cred PIN.</LocalizedDescription>
+	    <LocalizedDescription xml:lang="DE">Mit dieser Aktion können Sie ihre PIN ändern.</LocalizedDescription>
+	    <ConfigDescription/>
+	</AppExtensionSpecification>
+	<AppExtensionSpecification>
+	    <ID>ReadCredentialsAction</ID>
+	    <ClassName>org.openecard.plugins.abcplugin.ReadCredentialsAction</ClassName>
+	    <LocalizedName xml:lang="EN">Read credentials</LocalizedName>
+	    <LocalizedName xml:lang="DE">PIN entsperren</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">Retrieve a list of the credentials stored in the IRMA card.</LocalizedDescription>
+	    <LocalizedDescription xml:lang="DE">Mit dieser Aktion können Sie ihre PIN entsperren.</LocalizedDescription>
+	    <ConfigDescription/>
+	</AppExtensionSpecification>
+	<AppExtensionSpecification>
+	    <ID>ReadOperationsAction</ID>
+	    <ClassName>org.openecard.plugins.abcplugin.ReadOperationsAction</ClassName>
+	    <LocalizedName xml:lang="EN">Read operations</LocalizedName>
+	    <LocalizedName xml:lang="DE">PIN entsperren</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">Read the last operations performed by the IRMA card.</LocalizedDescription>
+	    <LocalizedDescription xml:lang="DE">Mit dieser Aktion können Sie ihre PIN entsperren.</LocalizedDescription>
+	    <ConfigDescription/>
+	</AppExtensionSpecification>
+    </ApplicationActions>
+    <IFDActions/>
+    <SALActions>
+	<ProtocolPluginSpecification>
+	    <URI>urn:oid:23.0.0.0.0.0.0.0.5</URI>
+	    <ClassName>org.openecard.sal.protocol.irmaprover.IRMAProverProtocol</ClassName>
+	    <LocalizedName xml:lang="EN">IRMA Prover Protocol Implementation</LocalizedName>
+	    <LocalizedDescription xml:lang="EN">TODO</LocalizedDescription>
+	    <ConfigDescription/>
+	</ProtocolPluginSpecification>
+    </SALActions>
+</AddonSpecification>

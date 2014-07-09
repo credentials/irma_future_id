@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CredentialStructure xmlns="http://www.zurich.ibm.com/security/idemix"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xsi:schemaLocation="http://www.zurich.ibm.com/security/idemix CredentialStructure.xsd">
+    
+    <Attributes>
+        <Attribute issuanceMode="known" name="attr1" type="int" />
+        <Attribute issuanceMode="known" name="attr2" type="int" />
+        <Attribute issuanceMode="known" name="attr3" type="int" />
+        <Attribute issuanceMode="known" name="attr4" type="int" />
+    </Attributes>
+
+    <Features/>
+
+    <Implementation>
+        <AttributeOrder>
+            <Attribute name="attr1">1</Attribute>
+            <Attribute name="attr2">2</Attribute>
+            <Attribute name="attr3">3</Attribute>
+            <Attribute name="attr4">4</Attribute>
+        </AttributeOrder>
+    </Implementation>
+
+</CredentialStructure>

@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Full Name: All Attributes</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>fullName</CredentialID>
+
+	<VerifierID>MijnOverheid</VerifierID>
+	<VerificationID>fullNameAll</VerificationID>
+
+	<Id>605</Id>
+
+	<Description>
+	  Gets the entire name credential for administrative purposes.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="firstnames" mode="revealed" />
+	  <AttributeMode id="firstname" mode="revealed" />
+	  <AttributeMode id="familyname" mode="revealed" />
+	  <AttributeMode id="prefix" mode="revealed" />
+	</AttributeModes>
+</VerifySpecification>

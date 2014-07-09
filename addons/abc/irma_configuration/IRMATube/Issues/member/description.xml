@@ -1,0 +1,22 @@
+<IssueSpecification>
+	<Name>IRMATube member</Name>
+	<ShortName>IRMATube</ShortName>
+	<IssuerID>IRMATube</IssuerID>
+	<CredentialID>member</CredentialID>
+	<Description>
+Your IRMATube membership.
+	</Description>
+
+	<Id>200</Id>
+
+	<Attributes>
+		<Attribute>
+			<Name>type</Name>
+			<Description>Your membership type</Description>
+		</Attribute>
+		<Attribute>
+			<Name>id</Name>
+			<Description>The membership id</Description>
+		</Attribute>
+	</Attributes>
+</IssueSpecification>

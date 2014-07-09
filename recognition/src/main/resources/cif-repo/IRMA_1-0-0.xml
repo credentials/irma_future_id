@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iso:CardInfo xmlns:iso="urn:iso:std:iso-iec:24727:tech:schema"
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			  xmlns:dss="urn:oasis:names:tc:dss:1.0:core:schema"
+			  xsi:schemaLocation="urn:iso:std:iso-iec:24727:tech:schema https://ws.openecard.org/schema/CardInfo.xsd">
+	<iso:CardType>
+		<iso:ObjectIdentifier>https://www.irmacard.org/irma-card</iso:ObjectIdentifier>
+		<iso:SpecificationBodyOrIssuer>
+			IRMA Card, Radboud University Nijmegen
+		</iso:SpecificationBodyOrIssuer>
+		<iso:CardTypeName xml:lang="EN">IRMA</iso:CardTypeName>
+		<iso:Version>
+			<iso:Major>0</iso:Major>
+			<iso:Minor>7</iso:Minor>
+			<iso:SubMinor>2</iso:SubMinor>
+		</iso:Version>
+		<iso:Status>Final Release</iso:Status>
+		<iso:Date>2014-07-25</iso:Date>
+	</iso:CardType>
+	<iso:CardIdentification>
+		<!--
+			The recognition of an IRMA card depends on the content of
+			the application list of the smart card. However, we
+			complete the section above for completeness.
+		-->
+		<iso:ATR>
+			<iso:TS>
+				<iso:Value>3B</iso:Value>
+				<iso:Mask>FF</iso:Mask>
+			</iso:TS>
+			<iso:T0>
+				<iso:Value>FF</iso:Value>
+				<iso:Mask>FF</iso:Mask>
+			</iso:T0>
+			<iso:InterfaceBytes>
+				<iso:Tx1>
+					<iso:TAi>
+						<iso:Value>96</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TAi>
+					<iso:TBi>
+						<iso:Value>00</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TBi>
+					<iso:TCi>
+						<iso:Value>FF</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TCi>
+					<iso:TDi>
+						<iso:Value>81</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TDi>
+				</iso:Tx1>
+				<iso:Tx2>
+					<iso:TDi>
+						<iso:Value>31</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TDi>
+				</iso:Tx2>
+				<iso:Tx3>
+					<iso:TAi>
+						<iso:Value>FE</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TAi>
+					<iso:TBi>
+						<iso:Value>4D</iso:Value>
+						<iso:Mask>FF</iso:Mask>
+					</iso:TBi>
+				</iso:Tx3>
+				<iso:Tx4>
+					<iso:TAi>
+						<iso:Value>00</iso:Value>
+						<iso:Mask>00</iso:Mask>
+					</iso:TAi>
+				</iso:Tx4>
+			</iso:InterfaceBytes>
+		</iso:ATR>
+
+		<!--
+			The recognition of an IRMA card is as follows. The
+			application list is read and the following AIDs are
+			expected: 			
+			
+			#1: IRMA      - 49524D4163617264
+		-->
+
+		<!-- Read the application list -->
+
+		<!-- The command (0x801006000014) is used to retrieve the list of
+		     applications in the IRMA card.
+		-->
+
+		<iso:CharacteristicFeature>
+			<!-- Read the list of stored applications -->
+			<iso:CardCall>
+				<iso:CommandAPDU>801006000014</iso:CommandAPDU>
+				<iso:ResponseAPDU>
+					<iso:Body>
+						<iso:MatchingData>
+							<iso:Length>14</iso:Length>
+							<iso:MatchingValue>09F849524D4163617264FFFFFFFFFFFFFF00AA00</iso:MatchingValue>
+						</iso:MatchingData>
+					</iso:Body>
+					<iso:Trailer>9000</iso:Trailer>
+				</iso:ResponseAPDU>
+			</iso:CardCall>
+		</iso:CharacteristicFeature>
+	</iso:CardIdentification>
+
+
+	<iso:ApplicationCapabilities>
+		<iso:ImplicitlySelectedApplication>F849524D4163617264</iso:ImplicitlySelectedApplication>
+		
+		<!-- =============== -->
+		<!-- CardApplication -->
+		<!-- ............... -->
+		<!--      IRMA       -->
+		<!-- =============== -->
+		<iso:CardApplication>
+			<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
+			<iso:InterfaceProtocol>urn:iso:std:iso-iec:7816:-3:protocols:T-equals-1</iso:InterfaceProtocol>
+			<iso:ApplicationIdentifier>F849524D4163617264</iso:ApplicationIdentifier>
+			<iso:ApplicationName>IRMA</iso:ApplicationName>
+
+			<!-- As there are only standardized card application services, there are no
+				 CardApplicationServiceInfo elements. -->
+
+			<!-- ======================== -->
+			<!-- IRMA: CardApplicationACL -->
+			<!-- ======================== -->
+
+
+			<iso:CardApplicationACL>
+
+				<!-- IRMA: CardApplicationServiceAccess -->
+
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>CardApplicationServiceAccess</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:APIAccessEntryPoint>Initialize</iso:APIAccessEntryPoint>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>CardApplicationServiceAccess</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:APIAccessEntryPoint>Terminate</iso:APIAccessEntryPoint>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>CardApplicationServiceAccess</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:APIAccessEntryPoint>CardApplicationPath</iso:APIAccessEntryPoint>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+
+				<!-- ======================== -->
+				<!-- IRMA: ConnectionService  -->
+				<!-- ======================== -->
+
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>ConnectionService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:ConnectionServiceAction>CardApplicationConnect</iso:ConnectionServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>ConnectionService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:ConnectionServiceAction>CardApplicationDisconnect</iso:ConnectionServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+								<!--
+								CardApplicationStartSession
+								and
+								CardApplicationEndSession
+								are NOT allowed.  -->
+
+				<!-- ============================ -->
+				<!-- IRMA: CardApplicationService -->
+				<!-- ============================ -->
+
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>CardApplicationService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:CardApplicationServiceAction>CardApplicationList</iso:CardApplicationServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+
+				<!-- ============================= -->
+				<!-- IRMA: Differential Identities -->
+				<!-- ============================= -->
+
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:DifferentialIdentityServiceAction>DIDList</iso:DifferentialIdentityServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:DifferentialIdentityServiceAction>DIDGet</iso:DifferentialIdentityServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:DifferentialIdentityServiceAction>DIDUpdate</iso:DifferentialIdentityServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+
+				<!-- ========================== -->
+				<!-- IRMA: AuthorizationService -->
+				<!-- ========================== -->
+
+				<!-- ACLModify is NOT allowed.  -->
+
+				<iso:AccessRule>
+					<iso:CardApplicationServiceName>AuthorizationService</iso:CardApplicationServiceName>
+					<iso:Action>
+						<iso:AuthorizationServiceAction>ACLList</iso:AuthorizationServiceAction>
+					</iso:Action>
+					<iso:SecurityCondition>
+						<iso:always>true</iso:always>
+					</iso:SecurityCondition>
+				</iso:AccessRule>
+			</iso:CardApplicationACL>
+
+
+			<!-- ============================= -->
+			<!-- IRMA: Differential Identities -->
+			<!-- ============================= -->
+
+			<!--IRMA PROVER -->
+
+			<iso:DIDInfo>
+				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
+				<iso:DifferentialIdentity>
+					<iso:DIDName>IRMA.PROVER</iso:DIDName>
+					<iso:DIDProtocol>urn:oid:23.0.0.0.0.0.0.0.5</iso:DIDProtocol>
+					<iso:DIDMarker>
+						<iso:IRMAProverMarker Protocol="urn:oid:23.0.0.0.0.0.0.0.5">
+							<iso:Policy>default</iso:Policy>
+						</iso:IRMAProverMarker>
+					</iso:DIDMarker>
+					<iso:DIDScope>global</iso:DIDScope>
+
+				</iso:DifferentialIdentity>
+				<iso:DIDACL>
+					<iso:AccessRule>
+						<iso:CardApplicationServiceName>DifferentialIdentityService</iso:CardApplicationServiceName>
+						<iso:Action>
+							<iso:DifferentialIdentityServiceAction>DIDAuthenticate</iso:DifferentialIdentityServiceAction>
+						</iso:Action>
+						<iso:SecurityCondition>
+							<iso:always>true</iso:always>
+						</iso:SecurityCondition>
+					</iso:AccessRule>
+				</iso:DIDACL>
+			</iso:DIDInfo>
+
+			<!-- ================ -->
+			<!-- IRMA: Data Sets  -->
+			<!-- ================ -->
+
+			<!-- EF.DIR -->
+
+			<iso:DataSetInfo>
+				<iso:RequirementLevel>PersonalizationMandatory</iso:RequirementLevel>
+				<iso:DataSetName>EF.DIR</iso:DataSetName>
+				<iso:DataSetACL>
+					<iso:AccessRule>
+						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
+						<iso:Action>
+							<iso:NamedDataServiceAction>DataSetSelect</iso:NamedDataServiceAction>
+						</iso:Action>
+						<iso:SecurityCondition>
+							<iso:always>true</iso:always>
+						</iso:SecurityCondition>
+					</iso:AccessRule>
+					<iso:AccessRule>
+						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
+						<iso:Action>
+							<iso:NamedDataServiceAction>DSIList</iso:NamedDataServiceAction>
+						</iso:Action>
+						<iso:SecurityCondition>
+							<iso:always>true</iso:always>
+						</iso:SecurityCondition>
+					</iso:AccessRule>
+					<iso:AccessRule>
+						<iso:CardApplicationServiceName>NamedDataService</iso:CardApplicationServiceName>
+						<iso:Action>
+							<iso:NamedDataServiceAction>DSIRead</iso:NamedDataServiceAction>
+						</iso:Action>
+						<iso:SecurityCondition>
+							<iso:always>true</iso:always>
+						</iso:SecurityCondition>
+					</iso:AccessRule>
+				</iso:DataSetACL>
+				<iso:DataSetPath>
+					<iso:efIdOrPath>2F00</iso:efIdOrPath>
+				</iso:DataSetPath>
+			</iso:DataSetInfo>
+		</iso:CardApplication>
+	</iso:ApplicationCapabilities>
+</iso:CardInfo>

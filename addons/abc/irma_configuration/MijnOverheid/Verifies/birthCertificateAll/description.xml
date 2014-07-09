@@ -1,0 +1,22 @@
+<VerifySpecification>
+	<Name>Birth Certificate: All Attributes</Name>
+
+	<IssuerID>MijnOverheid</IssuerID>
+	<CredentialID>birthCertificate</CredentialID>
+
+	<VerifierID>MijnOverheid</VerifierID>
+	<VerificationID>birthCertificateAll</VerificationID>
+
+	<Id>606</Id>
+
+	<Description>
+	  Gets the entire birth certificate credential for administrative purposes.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="dateofbirth" mode="revealed" />
+	  <AttributeMode id="placeofbirth" mode="revealed" />
+	  <AttributeMode id="countryofbirth" mode="revealed" />
+	  <AttributeMode id="gender" mode="revealed" />
+	</AttributeModes>
+</VerifySpecification>

@@ -1,0 +1,9 @@
+<Issuer>
+  <ID>RU</ID>
+  <Name>Radboud Universiteit Nijmegen</Name>
+  <ContactAddress>Comeniuslaan 4
+6525 HP Nijmegen</ContactAddress>
+  <ContactEMail>info@ru.nl</ContactEMail>
+
+  <baseURL>http://www.irmacard.org/credentials/phase1/RU/</baseURL>
+</Issuer>

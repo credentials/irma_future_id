@@ -1,0 +1,31 @@
+<IssueSpecification>
+	<Name>Future ID eID</Name>
+	<ShortName>FutureID</ShortName>
+	<IssuerID>RU</IssuerID>
+	<CredentialID>studentCard</CredentialID>
+	<Description>
+	  Student Card issued by the Radboud University Nijmegen.
+	</Description>
+
+	<Id>15</Id>
+
+	<Attributes>
+		<Attribute>
+			<Name>nameSurname</Name>
+			<Description>The name of the nameSurname</Description>
+		</Attribute>
+		<Attribute>
+			<Name>eIdentifier</Name>
+			<Description>The unique number of your student card</Description>
+		</Attribute>
+		<Attribute>
+			<Name>address</Name>
+			<Description>Your student number</Description>
+		</Attribute>
+		<Attribute>
+			<Name>age</Name>
+			<Description>Whether you are a regular or PhD student</Description>
+		</Attribute>
+
+	</Attributes>
+</IssueSpecification>

@@ -1,0 +1,10 @@
+<Issuer>
+  <ID>IRMAWiki</ID>
+  <Name>IRMAWiki</Name>
+  <ContactAddress>Radboud Universiteit Nijmegen
+Comeniuslaan 4
+6525 HP Nijmegen</ContactAddress>
+  <ContactEMail>info@wiki.irmacard.nl</ContactEMail>
+
+  <baseURL>http://www.irmacard.org/credentials/phase1/IRMAWiki/</baseURL>
+</Issuer>

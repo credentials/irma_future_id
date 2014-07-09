@@ -1,0 +1,21 @@
+<VerifySpecification>
+	<Name>IRMATube member: All</Name>
+
+	<IssuerID>IRMATube</IssuerID>
+	<CredentialID>member</CredentialID>
+
+	<VerifierID>IRMATube</VerifierID>
+	<VerificationID>memberAll</VerificationID>
+
+	<Id>901</Id>
+
+	<Description>
+	  Reveal all membership attributes for administrative purposes.
+	</Description>
+
+	<AttributeModes>
+	  <AttributeMode id="name" mode="revealed" />
+	  <AttributeMode id="type" mode="revealed" />
+	  <AttributeMode id="id" mode="revealed" />
+	</AttributeModes>
+</VerifySpecification>

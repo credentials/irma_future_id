@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+	<groupId>org.openecard</groupId>
+	<artifactId>app</artifactId>
+	<version>1.1.0-pre1</version>
+    </parent>
+
+    <groupId>org.openecard</groupId>
+    <artifactId>addons</artifactId>
+    <packaging>pom</packaging>
+    <name>Integrated Add-ons</name>
+
+    <modules>
+	<module>pin-management</module>
+	<module>genericcryptography</module>
+	<module>tr03112</module>
+	<module>status</module>
+	<module>pkcs11</module>
+	<module>abc</module>
+    </modules>
+
+    <dependencies>
+	<dependency>
+	    <groupId>org.openecard</groupId>
+	    <artifactId>addon</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.openecard.wsdef</groupId>
+	    <artifactId>wsdef-client</artifactId>
+	    <version>${project.version}</version>
+	    <scope>provided</scope>
+	</dependency>
+    </dependencies>
+
+</project>
